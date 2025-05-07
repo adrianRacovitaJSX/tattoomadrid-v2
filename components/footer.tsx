@@ -134,11 +134,11 @@ const Footer = () => {
               
               <ul className="space-y-3">
                 {[
-                  { name: 'Tatuajes Personalizados', href: '/servicios/tatuajes-personalizados' }, 
-                  { name: 'Piercings', href: '/servicios/piercings' }, 
-                  { name: 'Micropigmentación', href: '/servicios/micropigmentacion' },
-                  { name: 'Microblading', href: '/servicios/microblading' }, 
-                  { name: 'Eliminación Láser', href: '/servicios/eliminacion-laser' }
+                  { name: 'Tatuajes Personalizados', href: '/servicios/' }, 
+                  { name: 'Piercings', href: '/servicios/' }, 
+                  { name: 'Micropigmentación', href: '/servicios/' },
+                  { name: 'Microblading', href: '/servicios/' }, 
+                  { name: 'Eliminación Láser', href: '/servicios/' }
                 ].map((item) => (
                   <li key={item.name}>
                     <Link 
