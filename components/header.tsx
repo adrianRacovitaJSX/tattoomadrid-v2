@@ -147,7 +147,6 @@ const Header = () => {
                       }`}
                     >
                       {link.name}
-                      <span className="absolute inset-x-0 bottom-0 h-0.5 bg-[#be8f52] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out origin-left"></span>
                     </Link>
                   </motion.div>
                 ))}

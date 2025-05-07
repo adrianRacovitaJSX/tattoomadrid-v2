@@ -9,6 +9,16 @@ import SplitText from '@/components/ui/split-text';
 import ShinyText from '@/components/ui/shiny-text';
 import ParticlesBackground from '@/components/ui/particles-background';
 
+// Componente para estadísticas
+const StatItem = ({ value, label }: { value: string; label: string }) => (
+  <div className="text-center px-4">
+    <div className="text-4xl sm:text-5xl font-bold mb-2 bg-gradient-to-r from-white to-[#be8f52] bg-clip-text text-transparent">
+      {value}
+    </div>
+    <div className="text-zinc-400 text-sm sm:text-base">{label}</div>
+  </div>
+);
+
 const HeroSection = () => {
   const videoRef = useRef(null);
   
@@ -71,111 +81,118 @@ const HeroSection = () => {
         />
       </div>
       
-      {/* Contenedor principal con animaciones */}
+      {/* Contenedor principal con animaciones - Nueva estructura */}
       <motion.div 
-        className="absolute inset-0 flex items-center justify-center z-10"
+        className="absolute inset-0 flex items-center z-10"
         initial="hidden"
         animate="visible"
         variants={containerVariants}
       >
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          {/* SLOGAN principal animado con Split Text */}
-          <div className="mb-6 md:mb-8">
-            <div className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tighter mb-2 md:mb-4">
-              <SplitText 
-                text="TRANSFORMAMOS" 
-                className="text-[#be8f52] leading-tight"
-                delay={0.5}
-                stagger={0.05}
-              />
-            </div>
+        <div className="container mx-auto max-w-6xl pt-2 sm:pt-20 px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center gap-12">
+            {/* Contenido de texto - Lado izquierdo */}
+            <div className="w-full md:w-7/12 space-y-8 text-center md:text-left">
+              <div>
+                <div className="inline-block px-3 py-1 bg-black/50 backdrop-blur-sm border border-[#be8f52]/50 rounded-full mb-4 text-sm text-[#be8f52] font-medium">
+                  Estudio de Tatuajes en Madrid
+                </div>
+                <div className="text-3xl md:text-5xl lg:text-5xl font-extrabold tracking-tight leading-tight">
+                  <SplitText 
+                    text="TRANSFORMAMOS" 
+                    className="text-[#be8f52] leading-tight"
+                    delay={0.5}
+                    stagger={0.05}
+                  />
+                  <div className="text-white">
+                    <ShinyText
+                      text=""
+                      className="text-3xl md:text-4xl lg:text-5xl font-bold relative"
+                      highlightWidth={10}
+                      speed={1.5}
+                    >
+                      <span className="leading-tight">IDEAS EN ARTE</span>
+                      <span className="whitespace-nowrap leading-tight block md:inline"> SOBRE TU PIEL</span>
+                    </ShinyText>
+                  </div>
+                </div>
+              </div>
+              
+              <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto md:mx-0 leading-relaxed">
+                <strong className="text-white font-medium">Saints & Sinners Tattoo Madrid</strong>, 
+                tu estudio de tatuajes profesional. Nuestros artistas expertos crean tatuajes 
+                personalizados con técnicas profesionales y los más altos estándares de calidad.
+              </p>
 
-            <div className="text-3xl md:text-4xl lg:text-6xl font-bold tracking-tight text-white">
-              <ShinyText
-                text=""
-                className="text-3xl md:text-4xl lg:text-6xl font-bold relative mb-4 md:mb-6"
-                highlightWidth={10}
-                speed={1.5}
+              {/* Botones de acción */}
+              <motion.div 
+                className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start"
+                variants={itemVariants}
               >
-                <span className="leading-tight">IDEAS EN ARTE</span>
-                <span className="whitespace-nowrap leading-tight block md:inline"> SOBRE TU PIEL</span>
-              </ShinyText>
+                <motion.div 
+                  whileHover={{ scale: 1.03 }} 
+                  whileTap={{ scale: 0.97 }}
+                  className="w-full sm:w-auto"
+                >
+                  <Link 
+                    href="/reservar" 
+                    className="block w-full px-8 py-3 md:py-4 bg-[#be8f52] text-black font-medium text-base md:text-lg rounded-lg hover:bg-[#be8f52]/90 transition-all duration-300 group relative overflow-hidden"
+                  >
+                    <span className="relative z-10">RESERVA TU CITA</span>
+                    <motion.span 
+                      className="absolute inset-0 bg-white"
+                      initial={{ translateY: "100%" }}
+                      whileHover={{ translateY: 0 }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  </Link>
+                </motion.div>
+                
+                <motion.div 
+                  whileHover={{ scale: 1.03 }} 
+                  whileTap={{ scale: 0.97 }}
+                  className="w-full sm:w-auto"
+                >
+                  <Link 
+                    href="/artistas" 
+                    className="block w-full px-8 py-3 md:py-4 bg-black/40 backdrop-blur-sm border border-white/20 text-white font-medium text-base md:text-lg rounded-lg hover:border-[#be8f52] hover:text-[#be8f52] transition-all duration-300"
+                  >
+                    VER ARTISTAS
+                  </Link>
+                </motion.div>
+              </motion.div>
+              
+              {/* Estadísticas */}
+              <div className="pt-8 mt-4 grid grid-cols-2 lg:flex lg:flex-row lg:justify-start gap-2 sm:gap-4 lg:gap-8 border-t border-zinc-800/50">
+                <StatItem value="+15" label="Años de experiencia" />
+                <StatItem value="1000+" label="Clientes satisfechos" />
+              </div>
+            </div>
+            
+            {/* Imagen de la derecha */}
+            <div className="w-full md:w-5/12 mt-12 md:mt-0 hidden md:flex justify-center">
+              <div className="relative w-[350px] h-[350px] lg:w-[450px] lg:h-[450px]">
+                {/* Imagen principal con efecto glassmorphism */}
+                <div className="absolute top-0 left-0 w-full h-full rounded-2xl overflow-hidden bg-zinc-800/20 backdrop-blur-sm shadow-2xl">
+                  <Image 
+                    src="/images/tattooo.jpg" 
+                    alt="Saints & Sinners Tattoo Madrid - Estudio de Tatuajes" 
+                    width={500} 
+                    height={500}
+                    className="w-full h-full object-cover opacity-90"
+                  />
+                </div>
+                
+                {/* Elementos decorativos */}
+                <div className="absolute -top-8 -right-8 w-24 h-24 bg-[#be8f52]/30 rounded-full blur-xl"></div>
+                <div className="absolute -bottom-5 -left-5 w-32 h-32 bg-[#be8f52]/30 rounded-full blur-xl"></div>
+                
+                {/* Etiqueta decorativa */}
+                <div className="absolute -bottom-6 right-8 sm:right-8 bg-zinc-900/90 backdrop-blur-xl px-6 py-3 rounded-xl border border-zinc-700/50 transform rotate-[-4deg] shadow-xl z-10 sm:z-auto sm:translate-y-0 translate-y-8">
+                  <p className="text-[#be8f52] font-medium">Tatuajes en Madrid</p>
+                </div>
+              </div>
             </div>
           </div>
-          
-          {/* Tarjetas de beneficios */}
-          <motion.div 
-            className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-6 mb-8 md:mb-12"
-            variants={itemVariants}
-          >
-            {benefits.map((item, i) => (
-              <motion.div 
-                key={i}
-                className={`p-4 md:p-6 backdrop-blur-md bg-black/40 border border-[#be8f52]/20 rounded-md group hover:bg-black/70 transition-all duration-300 ${item.hideOnMobile ? 'hidden sm:block' : ''}`}
-                whileHover={{ 
-                  y: -5, 
-                  boxShadow: "0 15px 30px rgba(190, 143, 82, 0.15)",
-                  borderColor: "rgba(190, 143, 82, 0.4)"
-                }}
-              >
-                <motion.span 
-                  className="inline-block text-xl md:text-2xl mb-1 md:mb-2"
-                  animate={{ 
-                    y: [0, -8, 0], 
-                    scale: [1, 1.1, 1] 
-                  }}
-                  transition={{ 
-                    duration: 3, 
-                    repeat: Infinity,
-                    repeatType: "reverse",
-                    delay: i * 0.5 
-                  }}
-                >
-                  {item.icon}
-                </motion.span>
-                <h3 className="text-[#be8f52] font-medium text-lg md:text-xl">{item.title}</h3>
-                <p className="text-white/80 text-sm md:text-base group-hover:text-white">{item.desc}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-          
-          {/* Botones con animaciones */}
-          <motion.div 
-            className="flex flex-col sm:flex-row justify-center gap-3 md:gap-4"
-            variants={itemVariants}
-          >
-            <motion.div 
-              whileHover={{ scale: 1.03 }} 
-              whileTap={{ scale: 0.97 }}
-              className="w-full sm:w-auto"
-            >
-              <Link 
-                href="/reservar" 
-                className="block w-full px-8 py-3 md:py-4 bg-[#be8f52] text-black font-medium text-base md:text-lg rounded-sm hover:bg-[#be8f52]/90 transition-all duration-300 group relative overflow-hidden"
-              >
-                <span className="relative z-10">RESERVA TU CITA</span>
-                <motion.span 
-                  className="absolute inset-0 bg-white"
-                  initial={{ translateY: "100%" }}
-                  whileHover={{ translateY: 0 }}
-                  transition={{ duration: 0.3 }}
-                />
-              </Link>
-            </motion.div>
-            
-            <motion.div 
-              whileHover={{ scale: 1.03 }} 
-              whileTap={{ scale: 0.97 }}
-              className="w-full sm:w-auto"
-            >
-              <Link 
-                href="/artistas" 
-                className="block w-full px-8 py-3 md:py-4 bg-black/40 backdrop-blur-sm border border-white/20 text-white font-medium text-base md:text-lg rounded-sm hover:border-[#be8f52] hover:text-[#be8f52] transition-all duration-300"
-              >
-                VER ARTISTAS
-              </Link>
-            </motion.div>
-          </motion.div>
         </div>
       </motion.div>
       
