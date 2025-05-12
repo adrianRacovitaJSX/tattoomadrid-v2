@@ -4,13 +4,11 @@ import { notFound } from 'next/navigation';
 import { Calendar, ArrowLeft, ChevronRight } from 'lucide-react';
 import ScrollReveal from '@/components/ui/scroll-reveal';
 
-interface Props {
-  params: {
-    slug: string;
-  };
+interface PageParams {
+  slug: string;
 }
 
-export default function BlogPostPage({ params }: Props) {
+export default function BlogPostPage({ params }: { params: PageParams }) {
   const post = blogPosts.find((post) => post.slug === params.slug);
 
   if (!post) {
