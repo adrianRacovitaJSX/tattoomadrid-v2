@@ -180,7 +180,7 @@ const ServicesSection = () => {
       y: 0,
       transition: {
         duration: 0.6,
-        ease: [0.22, 1, 0.36, 1]
+        ease: "easeOut" as const
       }
     }
   };
@@ -282,7 +282,7 @@ const ServicesSection = () => {
               transition={{ 
                 duration: 0.5, 
                 delay: index * 0.1,
-                ease: [0.22, 1, 0.36, 1]
+                ease: "easeOut" as const
               }}
               viewport={{ once: true, amount: 0.2 }}
             >

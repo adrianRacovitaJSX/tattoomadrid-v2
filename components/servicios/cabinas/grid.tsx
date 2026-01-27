@@ -16,7 +16,7 @@ const CabinasGridSection = () => {
               className="order-2 md:order-1"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.7, ease: "easeOut" as const }}
               viewport={{ once: true, amount: 0.3 }}
             >
               <div className="inline-flex items-center px-4 py-2 bg-[#be8f52]/10 rounded-full mb-4">
@@ -124,7 +124,7 @@ const CabinasGridSection = () => {
               className="order-2"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.7, ease: "easeOut" as const }}
               viewport={{ once: true, amount: 0.3 }}
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Comodidades para Profesionales</h2>

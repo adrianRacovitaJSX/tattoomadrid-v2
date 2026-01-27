@@ -35,7 +35,7 @@ const fadeIn = {
     transition: {
       delay: i * 0.1,
       duration: 0.5,
-      ease: [0.22, 1, 0.36, 1]
+      ease: "easeOut" as const
     }
   })
 };
@@ -47,7 +47,7 @@ const Certificaciones = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.7, ease: "easeOut" as const }}
           viewport={{ once: true }}
           className="text-center mb-12"
         >
@@ -86,7 +86,7 @@ const Certificaciones = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.7, delay: 0.4, ease: "easeOut" as const }}
           viewport={{ once: true }}
           className="bg-[#be8f52]/10 p-8 border-l-4 border-[#be8f52] max-w-3xl mx-auto text-center"
         >

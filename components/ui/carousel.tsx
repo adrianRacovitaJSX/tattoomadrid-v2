@@ -137,12 +137,12 @@ const Carousel: React.FC<CarouselProps> = ({
           center: { 
             x: 0, 
             opacity: 1,
-            transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
+            transition: { duration: 0.5, ease: "easeOut" as const }
           },
           exit: (direction: number) => ({ 
             x: direction > 0 ? "-100%" : "100%", 
             opacity: 0,
-            transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] }
+            transition: { duration: 0.3, ease: "easeOut" as const }
           }),
         };
     }

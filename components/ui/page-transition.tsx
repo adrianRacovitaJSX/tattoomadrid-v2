@@ -27,7 +27,7 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
       y: 0,
       transition: {
         duration: 0.5,
-        ease: [0.22, 1, 0.36, 1]
+        ease: "easeOut" as const
       }
     },
     exit: {
@@ -35,7 +35,7 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
       y: -50,
       transition: {
         duration: 0.3,
-        ease: [0.22, 1, 0.36, 1]
+        ease: "easeOut" as const
       }
     }
   };
@@ -59,7 +59,7 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
         initial={{ scaleY: 1 }}
         animate={{ scaleY: 0 }}
         exit={{ scaleY: 1 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.5, ease: "easeOut" as const }}
         style={{ transformOrigin: 'top' }}
       />
     </AnimatePresence>

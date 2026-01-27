@@ -49,7 +49,7 @@ const PreguntasFrecuentesSection = () => {
           className="max-w-3xl mx-auto text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.7, ease: "easeOut" as const }}
           viewport={{ once: true }}
         >
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
@@ -70,7 +70,7 @@ const PreguntasFrecuentesSection = () => {
               transition={{ 
                 duration: 0.5, 
                 delay: index * 0.1,
-                ease: [0.22, 1, 0.36, 1]
+                ease: "easeOut" as const
               }}
               viewport={{ once: true, amount: 0.3 }}
             >
@@ -103,7 +103,7 @@ const PreguntasFrecuentesSection = () => {
           className="max-w-3xl mx-auto text-center mt-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.7, delay: 0.4, ease: "easeOut" as const }}
           viewport={{ once: true }}
         >
           <p className="text-gray-600 dark:text-gray-300 mb-6">

@@ -88,7 +88,7 @@ const StatCard: React.FC<StatProps> = ({ value, label, description, icon, color 
         >
           <motion.div
             animate={{ rotate: isHovered ? [0, 15, 0] : 0 }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
+            transition={{ duration: 0.5, ease: "easeInOut" as const }}
           >
             {icon}
           </motion.div>

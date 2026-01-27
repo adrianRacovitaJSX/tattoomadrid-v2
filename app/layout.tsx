@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import PageTransition from "@/components/ui/page-transition";
+import CookieConsentBanner from "@/components/cookie-consent";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -47,6 +48,7 @@ export default function RootLayout({
             </main>
             <Footer />
           </div>
+          <CookieConsentBanner />
         </ThemeProvider>
       </body>
     </html>

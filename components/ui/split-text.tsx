@@ -36,7 +36,7 @@ const SplitText: React.FC<SplitTextProps> = ({
       y: "120%", 
       opacity: 0,
       rotateX: "40deg",
-      transition: { duration: 0, ease: "easeInOut" }
+      transition: { duration: 0, ease: "easeInOut" as const }
     },
     visible: (i: number) => ({
       y: 0,
@@ -45,7 +45,7 @@ const SplitText: React.FC<SplitTextProps> = ({
       transition: {
         delay: delay + i * stagger,
         duration: duration,
-        ease: [0.22, 1, 0.36, 1],
+        ease: "easeOut" as const,
       },
     }),
     highlight: (i: number) => ({

@@ -56,7 +56,7 @@ const BookingSection = () => {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+      transition: { duration: 0.6, ease: "easeOut" as const },
     },
   };
 
@@ -111,7 +111,7 @@ const BookingSection = () => {
             className="lg:col-span-2 bg-white dark:bg-zinc-900 rounded-2xl shadow-lg p-6 border border-gray-100 dark:border-zinc-800"
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.6, ease: "easeOut" as const }}
             viewport={{ once: true, amount: 0.3 }}
           >
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
@@ -192,7 +192,7 @@ const BookingSection = () => {
             className="lg:col-span-3 relative"
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+            transition={{ duration: 0.6, ease: "easeOut" as const, delay: 0.2 }}
             viewport={{ once: true, amount: 0.3 }}
           >
             <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-lg p-8 border border-gray-100 dark:border-zinc-800 h-full">
@@ -296,7 +296,7 @@ const BookingSection = () => {
           className="mt-16"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
+          transition={{ duration: 0.6, ease: "easeOut" as const, delay: 0.3 }}
           viewport={{ once: true, amount: 0.2 }}
         >
           <div className="rounded-2xl bg-gradient-to-r from-[#be8f52]/20 to-[#be8f52]/5 p-8 relative overflow-hidden">

@@ -60,7 +60,7 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
       transition: {
         duration,
         delay,
-        ease: [0.22, 1, 0.36, 1],
+        ease: "easeOut" as const,
         staggerChildren: staggerChildren ? staggerAmount : 0,
       },
     },
@@ -75,7 +75,7 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
       opacity: 1,
       transition: {
         duration,
-        ease: [0.22, 1, 0.36, 1],
+        ease: "easeOut" as const,
       },
     },
   };

@@ -20,7 +20,8 @@ const FormularioSection = () => {
     subject: subjectParam || '',
     artist: artistParam || '',
     message: '',
-    acceptTerms: false
+    acceptTerms: false,
+    acceptMarketing: false
   });
   
   const [sending, setSending] = useState(false);
@@ -60,7 +61,8 @@ const FormularioSection = () => {
         subject: '',
         artist: '',
         message: '',
-        acceptTerms: false
+        acceptTerms: false,
+        acceptMarketing: false
       });
     } catch (error) {
       setFormStatus('error');
@@ -210,19 +212,62 @@ const FormularioSection = () => {
                 />
               </div>
               
-              <div className="flex items-start">
-                <input
-                  type="checkbox"
-                  id="acceptTerms"
-                  name="acceptTerms"
-                  checked={formData.acceptTerms}
-                  onChange={handleInputChange}
-                  required
-                  className="h-5 w-5 mt-1 text-[#be8f52] border-gray-300 dark:border-zinc-700 rounded focus:ring-[#be8f52]"
-                />
-                <label htmlFor="acceptTerms" className="ml-3 text-sm text-gray-700 dark:text-gray-300">
-                  Acepto la <Link href="/privacidad" className="text-[#be8f52] hover:underline">política de privacidad</Link> y el tratamiento de mis datos
-                </label>
+              {/* Información sobre tratamiento de datos */}
+              <div className="bg-gray-50 dark:bg-zinc-800/50 rounded-lg p-4 border border-gray-200 dark:border-zinc-700">
+                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                  <strong className="text-gray-700 dark:text-gray-300">Información sobre el tratamiento de datos:</strong>{' '}
+                  Los datos que nos facilites serán tratados por Alexander Gamboa Fiestas (Saints & Sinners Tattoo Madrid) 
+                  con la finalidad de gestionar tu consulta y ponernos en contacto contigo. La base legal del tratamiento 
+                  es tu consentimiento. No se cederán datos a terceros salvo obligación legal. Puedes ejercer tus derechos 
+                  de acceso, rectificación, supresión y otros consultando nuestra{' '}
+                  <Link href="/privacidad" className="text-[#be8f52] hover:underline">política de privacidad</Link>.
+                </p>
+              </div>
+
+              {/* Checkboxes de consentimiento */}
+              <div className="space-y-3">
+                <div className="flex items-start">
+                  <div className="flex items-center h-5">
+                    <input
+                      type="checkbox"
+                      id="acceptTerms"
+                      name="acceptTerms"
+                      checked={formData.acceptTerms}
+                      onChange={handleInputChange}
+                      required
+                      className="h-4 w-4 text-[#be8f52] border-gray-300 dark:border-zinc-600 rounded focus:ring-[#be8f52] dark:bg-zinc-700"
+                    />
+                  </div>
+                  <div className="ml-3 text-sm">
+                    <label htmlFor="acceptTerms" className="font-medium text-gray-700 dark:text-gray-300">
+                      Acepto la política de privacidad *
+                    </label>
+                    <p className="text-gray-500 dark:text-gray-400">
+                      He leído y acepto la <Link href="/privacidad" className="text-[#be8f52] hover:underline">política de privacidad</Link> de Saints & Sinners by Gamboa.
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start">
+                  <div className="flex items-center h-5">
+                    <input
+                      type="checkbox"
+                      id="acceptMarketing"
+                      name="acceptMarketing"
+                      checked={formData.acceptMarketing}
+                      onChange={handleInputChange}
+                      className="h-4 w-4 text-[#be8f52] border-gray-300 dark:border-zinc-600 rounded focus:ring-[#be8f52] dark:bg-zinc-700"
+                    />
+                  </div>
+                  <div className="ml-3 text-sm">
+                    <label htmlFor="acceptMarketing" className="font-medium text-gray-700 dark:text-gray-300">
+                      Acepto recibir comunicaciones comerciales
+                    </label>
+                    <p className="text-gray-500 dark:text-gray-400">
+                      Deseo recibir información sobre promociones, eventos y novedades de Saints & Sinners by Gamboa.
+                    </p>
+                  </div>
+                </div>
               </div>
               
               <button

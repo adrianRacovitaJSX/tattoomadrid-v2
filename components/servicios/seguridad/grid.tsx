@@ -16,7 +16,7 @@ const SeguridadGridSection = () => {
               className="order-2 md:order-1"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.7, ease: "easeOut" as const }}
               viewport={{ once: true, amount: 0.3 }}
             >
               <div className="inline-flex items-center px-4 py-2 bg-[#be8f52]/10 rounded-full mb-4">
@@ -72,7 +72,7 @@ const SeguridadGridSection = () => {
               className="order-1 md:order-2 relative"
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.7, ease: "easeOut" as const }}
               viewport={{ once: true, amount: 0.3 }}
             >
               <div className="aspect-w-4 aspect-h-3 relative">
@@ -99,7 +99,7 @@ const SeguridadGridSection = () => {
               className="relative order-1"
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.7, ease: "easeOut" as const }}
               viewport={{ once: true, amount: 0.3 }}
             >
               <div className="aspect-w-4 aspect-h-3 relative">
@@ -121,7 +121,7 @@ const SeguridadGridSection = () => {
               className="order-2"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.7, ease: "easeOut" as const }}
               viewport={{ once: true, amount: 0.3 }}
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Nuestro Proceso de Esterilización</h2>
@@ -169,7 +169,7 @@ const SeguridadGridSection = () => {
           className="bg-gradient-to-r from-[#be8f52] to-[#be8f52]/80 p-10 rounded-xl relative overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.7, ease: "easeOut" as const }}
           viewport={{ once: true }}
           whileHover={{ scale: 1.02, boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.3)" }}
         >

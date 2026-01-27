@@ -25,7 +25,7 @@ const SeguridadHeroSection = () => {
     visible: {
       y: 0,
       opacity: 1,
-      transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] }
+      transition: { duration: 0.7, ease: "easeOut" as const }
     }
   };
 

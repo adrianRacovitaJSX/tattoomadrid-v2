@@ -25,7 +25,7 @@ const SeguridadTopSection = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.7, ease: "easeOut" as const }}
           >
             <div className="flex justify-center mb-6">
               <div className="w-16 h-16 rounded-full bg-[#be8f52]/20 flex items-center justify-center">
