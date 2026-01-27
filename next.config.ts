@@ -11,11 +11,6 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: '/Artistas/:path*',
-        destination: '/artistas',
-        permanent: true,
-      },
-      {
         source: '/author/:path*',
         destination: '/artistas',
         permanent: true,

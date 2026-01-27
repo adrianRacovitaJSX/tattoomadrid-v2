@@ -65,7 +65,7 @@ const Header = () => {
       opacity: 1, 
       x: 0,
       transition: {
-        type: 'spring',
+        type: 'spring' as const,
         stiffness: 200,
         damping: 30,
         staggerChildren: 0.07,
@@ -76,8 +76,8 @@ const Header = () => {
       opacity: 0, 
       x: '100%',
       transition: {
-        type: 'tween',
-        ease: 'easeInOut',
+        type: 'tween' as const,
+        ease: 'easeInOut' as const,
         duration: 0.3
       }
     }
@@ -88,7 +88,7 @@ const Header = () => {
     visible: { 
       opacity: 1, 
       x: 0,
-      transition: { type: 'spring', stiffness: 300, damping: 20 } 
+      transition: { type: 'spring' as const, stiffness: 300, damping: 20 } 
     },
     exit: { opacity: 0, x: 20 }
   };

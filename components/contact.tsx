@@ -105,84 +105,95 @@ const ContactSection = () => {
           <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-lg p-8 border border-gray-100 dark:border-zinc-800">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Envíanos un mensaje</h3>
             
-            <form className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <form className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="card-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Nombre
                   </label>
                   <input
                     type="text"
-                    id="name"
-                    name="name"
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg focus:ring-2 focus:ring-[#be8f52] focus:border-[#be8f52] dark:focus:ring-[#be8f52] dark:focus:border-[#be8f52] outline-none transition-colors"
+                    id="card-name"
+                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg focus:ring-2 focus:ring-[#be8f52] focus:border-[#be8f52] outline-none transition-colors text-sm"
                     placeholder="Tu nombre"
                   />
                 </div>
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="card-email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Email
                   </label>
                   <input
                     type="email"
-                    id="email"
-                    name="email"
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg focus:ring-2 focus:ring-[#be8f52] focus:border-[#be8f52] dark:focus:ring-[#be8f52] dark:focus:border-[#be8f52] outline-none transition-colors"
+                    id="card-email"
+                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg focus:ring-2 focus:ring-[#be8f52] focus:border-[#be8f52] outline-none transition-colors text-sm"
                     placeholder="tu@email.com"
                   />
                 </div>
               </div>
               
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label htmlFor="card-phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Teléfono
                 </label>
                 <input
                   type="tel"
-                  id="phone"
-                  name="phone"
-                  className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg focus:ring-2 focus:ring-[#be8f52] focus:border-[#be8f52] dark:focus:ring-[#be8f52] dark:focus:border-[#be8f52] outline-none transition-colors"
+                  id="card-phone"
+                  className="w-full px-4 py-2.5 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg focus:ring-2 focus:ring-[#be8f52] focus:border-[#be8f52] outline-none transition-colors text-sm"
                   placeholder="+34 XXX XX XX XX"
                 />
               </div>
               
               <div>
-                <label htmlFor="service" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Servicio de interés
-                </label>
-                <select
-                  id="service"
-                  name="service"
-                  className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg focus:ring-2 focus:ring-[#be8f52] focus:border-[#be8f52] dark:focus:ring-[#be8f52] dark:focus:border-[#be8f52] outline-none transition-colors"
-                >
-                  <option value="">Selecciona un servicio</option>
-                  <option value="tattoo">Tatuaje</option>
-                  <option value="piercing">Piercing</option>
-                  <option value="micropigmentation">Micropigmentación</option>
-                  <option value="microblading">Microblading</option>
-                  <option value="tattoo-removal">Eliminación de tatuajes</option>
-                  <option value="booth-rental">Alquiler de cabina</option>
-                </select>
-              </div>
-              
-              <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label htmlFor="card-message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Mensaje
                 </label>
                 <textarea
-                  id="message"
-                  name="message"
-                  rows={4}
-                  className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg focus:ring-2 focus:ring-[#be8f52] focus:border-[#be8f52] dark:focus:ring-[#be8f52] dark:focus:border-[#be8f52] outline-none transition-colors"
-                  placeholder="Cuéntanos sobre tu proyecto..."
+                  id="card-message"
+                  rows={3}
+                  className="w-full px-4 py-2.5 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg focus:ring-2 focus:ring-[#be8f52] focus:border-[#be8f52] outline-none transition-colors text-sm resize-none"
+                  placeholder="¿En qué podemos ayudarte?"
                 ></textarea>
+              </div>
+
+              {/* Información sobre tratamiento de datos */}
+              <div className="bg-gray-50 dark:bg-zinc-800/50 rounded-lg p-3 border border-gray-100 dark:border-zinc-800/50">
+                <p className="text-[11px] text-gray-500 dark:text-gray-400 leading-tight text-justify">
+                  <strong>Info:</strong> Los datos serán tratados por Alexander Gamboa Fiestas para gestionar tu consulta. 
+                  Base legal: consentimiento. Derechos e info adicional en nuestra 
+                  <a href="/privacidad" className="text-[#be8f52] hover:underline ml-1">política de privacidad</a>.
+                </p>
+              </div>
+
+              {/* Checkboxes simplificados para esta sección */}
+              <div className="space-y-2">
+                <div className="flex items-start">
+                  <input
+                    type="checkbox"
+                    id="card-privacy"
+                    required
+                    className="h-4 w-4 mt-0.5 text-[#be8f52] border-gray-300 rounded focus:ring-[#be8f52]"
+                  />
+                  <label htmlFor="card-privacy" className="ml-2 text-xs text-gray-600 dark:text-gray-400">
+                    Acepto la política de privacidad *
+                  </label>
+                </div>
+                <div className="flex items-start">
+                  <input
+                    type="checkbox"
+                    id="card-marketing"
+                    className="h-4 w-4 mt-0.5 text-[#be8f52] border-gray-300 rounded focus:ring-[#be8f52]"
+                  />
+                  <label htmlFor="card-marketing" className="ml-2 text-xs text-gray-600 dark:text-gray-400">
+                    Deseo recibir información comercial
+                  </label>
+                </div>
               </div>
               
               <button
                 type="submit"
-                className="w-full px-6 py-4 bg-[#be8f52] hover:bg-[#be8f52]/90 text-white font-medium rounded-lg transition-colors duration-300 flex items-center justify-center"
+                className="w-full px-6 py-3 bg-[#be8f52] hover:bg-[#be8f52]/90 text-white font-medium rounded-lg transition-colors duration-300 flex items-center justify-center text-sm"
               >
-                <Send size={18} className="mr-2" />
+                <Send size={16} className="mr-2" />
                 Enviar mensaje
               </button>
             </form>

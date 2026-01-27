@@ -16,6 +16,7 @@ export default function Page() {
       <HeroSection />
       <TeamGridSection />
       <ArtistasDestacadosSection />
+      <TestimoniosSection />
       <ContactSection />
     </>
   );

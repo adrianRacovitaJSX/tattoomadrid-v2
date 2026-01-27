@@ -39,7 +39,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
       pathLength: 1,
       opacity: 1,
       transition: {
-        pathLength: { type: "spring", duration: 1.5, bounce: 0 },
+        pathLength: { type: "spring" as const, duration: 1.5, bounce: 0 },
         opacity: { duration: 0.5 }
       }
     }
