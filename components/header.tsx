@@ -2,15 +2,19 @@
 
 import React, { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Sun, Moon, Instagram, Facebook, ChevronRight } from 'lucide-react';
 
 const Header = () => {
+  const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
+
+  if (pathname?.startsWith('/landing')) return null;
 
   // Detectar scroll para cambiar la apariencia del header
   useEffect(() => {

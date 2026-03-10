@@ -1,13 +1,17 @@
 "use client";
 
 import React from 'react';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Instagram, MapPin, Phone, Mail, Clock, ChevronRight, ChevronUp, Send } from 'lucide-react';
 
 const Footer = () => {
+  const pathname = usePathname();
   const currentYear = new Date().getFullYear();
+
+  if (pathname?.startsWith('/landing')) return null;
   
   // Configuración de animación
   const itemVariants = {
