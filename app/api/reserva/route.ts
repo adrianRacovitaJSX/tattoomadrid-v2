@@ -82,12 +82,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-
-// Configurar el límite del tamaño del cuerpo de la solicitud
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '10mb', // Límite de tamaño para las imágenes
-    },
-  },
-}; 

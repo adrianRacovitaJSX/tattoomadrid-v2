@@ -9,6 +9,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const META_PIXEL_ID = process.env.META_PIXEL_ID || "2146708569419537";
 const META_TOKEN = process.env.META_CONVERSIONS_API_TOKEN;
 const META_API_VERSION = "v21.0";
+const META_TEST_EVENT_CODE = process.env.META_TEST_EVENT_CODE || null;
 
 function sha256(value: string): string {
   return createHash("sha256")
@@ -57,7 +58,7 @@ async function sendMetaConversionEvent({
     userData.fbp = fbp;
   }
 
-  const payload = {
+  const payload: Record<string, unknown> = {
     data: [
       {
         event_name: "Contact",
@@ -69,6 +70,10 @@ async function sendMetaConversionEvent({
       },
     ],
   };
+
+  if (META_TEST_EVENT_CODE) {
+    payload.test_event_code = META_TEST_EVENT_CODE;
+  }
 
   try {
     const url = `https://graph.facebook.com/${META_API_VERSION}/${META_PIXEL_ID}/events?access_token=${META_TOKEN}`;
