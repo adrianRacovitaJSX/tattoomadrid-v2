@@ -1,7 +1,22 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { Playfair_Display, DM_Sans } from "next/font/google";
 
 const META_PIXEL_ID = "2146708569419537";
+
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  display: "swap",
+});
+
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Consulta Gratuita de Tatuaje | Saints & Sinners by Gamboa — Madrid",
@@ -40,7 +55,9 @@ export default function LandingLayout({
           alt=""
         />
       </noscript>
-      {children}
+      <div className={`dark min-h-screen bg-[#0A0A0A] text-white ${playfair.variable} ${dmSans.variable}`}>
+        {children}
+      </div>
     </>
   );
 }

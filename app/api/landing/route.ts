@@ -11,6 +11,44 @@ const META_TOKEN = process.env.META_CONVERSIONS_API_TOKEN;
 const META_API_VERSION = "v21.0";
 const META_TEST_EVENT_CODE = process.env.META_TEST_EVENT_CODE || null;
 
+const N8N_LEAD_WEBHOOK_URL =
+  process.env.N8N_LEAD_WEBHOOK_URL ||
+  "https://snstattoomadrid.app.n8n.cloud/webhook/nuevo-lead";
+
+/** Teléfono solo dígitos, prefijo 34 sin + (ej. 612 345 678 → 34612345678) */
+function normalizePhoneForN8n(phone: string): string {
+  const digits = phone.replace(/\D/g, "").replace(/^0+/, "");
+  if (digits.startsWith("34")) return digits;
+  return `34${digits}`;
+}
+
+/** Envía lead a n8n; nunca lanza — fallos solo en log */
+async function sendN8nLeadWebhook(payload: {
+  nombre: string;
+  telefono: string;
+  email: string;
+  descripcion_tatuaje: string;
+}): Promise<void> {
+  try {
+    const res = await fetch(N8N_LEAD_WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      console.error(
+        "n8n webhook error:",
+        res.status,
+        res.statusText,
+        text.slice(0, 500)
+      );
+    }
+  } catch (err) {
+    console.error("n8n webhook fetch failed:", err);
+  }
+}
+
 function sha256(value: string): string {
   return createHash("sha256")
     .update(value.trim().toLowerCase())
@@ -47,12 +85,15 @@ async function sendMetaConversionEvent({
     : `+34${normalizedPhone}`;
 
   const userData: Record<string, unknown> = {
-    em: [sha256(email)],
     ph: [sha256(phoneWithCountry)],
     fn: [sha256(firstName)],
     client_ip_address: clientIp,
     client_user_agent: userAgent,
   };
+
+  if (email) {
+    userData.em = [sha256(email)];
+  }
 
   if (fbp) {
     userData.fbp = fbp;
@@ -101,7 +142,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { name, phone, email, project, eventId, fbp, sourceUrl } = body;
 
-    if (!name || !phone || !email || !project) {
+    if (!name || !phone || !project) {
       return NextResponse.json(
         { error: "Faltan campos obligatorios" },
         { status: 400 }
@@ -114,27 +155,26 @@ export async function POST(req: NextRequest) {
       "0.0.0.0";
     const userAgent = req.headers.get("user-agent") || "";
 
-    const [adminRes, userRes] = await Promise.all([
+    const telefonoN8n = normalizePhoneForN8n(String(phone));
+
+    const emailStr = String(email || "").trim();
+
+    // Siempre: admin email, CAPI, n8n
+    const promises: Promise<unknown>[] = [
       resend.emails.send({
         from: "Saints & Sinners Tattoo Madrid <notificaciones@tattoomadrid.com>",
         to: process.env.ADMIN_EMAIL || "snstattoomadrid@gmail.com",
         subject: `🔥 Nueva consulta landing: ${name}`,
         react: LandingAdminEmail({
           name,
-          email,
+          email: emailStr || "(no proporcionado)",
           phone,
           project,
         }) as React.ReactElement,
       }),
-      resend.emails.send({
-        from: "Saints & Sinners Tattoo Madrid <notificaciones@tattoomadrid.com>",
-        to: email,
-        subject: "Hemos recibido tu consulta — Saints & Sinners",
-        react: LandingUserEmail({ name }) as React.ReactElement,
-      }),
       sendMetaConversionEvent({
         eventId: eventId || `server.${Date.now()}`,
-        email,
+        email: emailStr,
         phone,
         firstName: name.split(" ")[0],
         fbp: fbp || null,
@@ -142,12 +182,31 @@ export async function POST(req: NextRequest) {
         clientIp,
         userAgent,
       }),
-    ]);
+      sendN8nLeadWebhook({
+        nombre: String(name).trim(),
+        telefono: telefonoN8n,
+        email: emailStr,
+        descripcion_tatuaje: String(project).trim(),
+      }),
+    ];
+
+    // Solo enviar email de confirmación si el usuario proporcionó email
+    if (emailStr) {
+      promises.push(
+        resend.emails.send({
+          from: "Saints & Sinners Tattoo Madrid <notificaciones@tattoomadrid.com>",
+          to: emailStr,
+          subject: "Hemos recibido tu consulta — Saints & Sinners",
+          react: LandingUserEmail({ name }) as React.ReactElement,
+        })
+      );
+    }
+
+    const [adminRes] = await Promise.all(promises);
 
     return NextResponse.json({
       success: true,
-      adminEmailId: adminRes.data?.id,
-      userEmailId: userRes.data?.id,
+      adminEmailId: (adminRes as { data?: { id?: string } })?.data?.id,
     });
   } catch (error: unknown) {
     console.error("Error landing form:", error);
