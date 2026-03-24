@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { X, Cookie, Settings, Check, Shield } from 'lucide-react';
 
 // Tipos de consentimiento de cookies
@@ -15,6 +16,10 @@ interface CookieConsent {
 const COOKIE_CONSENT_KEY = 'cookie-consent';
 
 const CookieConsentBanner = () => {
+  const pathname = usePathname();
+  const hideOnLanding =
+    pathname === '/landing' || pathname.startsWith('/landing/');
+
   const [showBanner, setShowBanner] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [consent, setConsent] = useState<CookieConsent>({
@@ -26,6 +31,8 @@ const CookieConsentBanner = () => {
   const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
+    if (hideOnLanding) return;
+
     // Verificar si ya existe consentimiento guardado
     const savedConsent = localStorage.getItem(COOKIE_CONSENT_KEY);
     if (savedConsent) {
@@ -44,7 +51,7 @@ const CookieConsentBanner = () => {
         setIsAnimating(true);
       }, 1000);
     }
-  }, []);
+  }, [hideOnLanding]);
 
   const saveConsent = (newConsent: CookieConsent) => {
     const consentWithTimestamp = {
@@ -87,16 +94,24 @@ const CookieConsentBanner = () => {
   };
 
   // Función para abrir el panel de configuración desde cualquier parte de la web
-  const openSettings = () => {
+  const openSettings = useCallback(() => {
     setShowBanner(true);
     setShowSettings(true);
     setIsAnimating(true);
-  };
+  }, []);
 
   // Exponer función global para abrir configuración de cookies
   useEffect(() => {
-    (window as typeof window & { openCookieSettings: () => void }).openCookieSettings = openSettings;
-  }, []);
+    if (hideOnLanding) {
+      delete (window as typeof window & { openCookieSettings?: () => void })
+        .openCookieSettings;
+      return;
+    }
+    (window as typeof window & { openCookieSettings: () => void }).openCookieSettings =
+      openSettings;
+  }, [hideOnLanding, openSettings]);
+
+  if (hideOnLanding) return null;
 
   if (!showBanner) return null;
 
