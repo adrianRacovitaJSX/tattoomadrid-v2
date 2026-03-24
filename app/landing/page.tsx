@@ -212,7 +212,7 @@ const portfolioItems = [
   { title: "Pierna completa chicano", src: "/AA4A48F6-6483-4F4B-8A71-45887F2B7150.jpg", aspect: "aspect-[3/4]", span: "" },
   { title: "Manga realismo mitológico", src: "/resenas-sns/adrian.webp", aspect: "aspect-[3/4]", span: "" },
   { title: "Chicano", src: "/IMG_4380.jpg", aspect: "aspect-[3/4]", span: "md:row-span-2" },
-  { title: "Manga chicano", src: "/images/portfolio/gamboa-4.webp", aspect: "aspect-[3/4]", span: "" },
+  { title: "Manga japonesa", src: "/IMG_4381.jpg", aspect: "aspect-[3/4]", span: "" },
   { title: "Manga calavera y rosas", src: "/images/portfolio/gamboa-1.webp", aspect: "aspect-[3/4]", span: "" },
 ];
 
@@ -309,9 +309,9 @@ const testimonials = [
     img: "/resenas-sns/pamela.webp",
   },
   {
-    text: "He ido con un poco de miedo porque era un sitio nuevo pero, me voy encantada, todos los tatuajes me han fascinado, incluido los retoques. Ha sido totalmente a mi gusto todo. Mi tatuador ha sido Miguel y es increíble. Me encanta su trabajo, el trato, su profesionalidad y carisma. Gracias y volveré.",
-    name: "Esteff Moren",
-    img: "/resenas-sns/esteff.webp",
+    text: "Excelente ambiente y la calidad del tatuaje por el tatuador Gamboa muy profesional muy recomendado volveré seguro",
+    name: "Jorge Pinho",
+    img: "/resenas-sns/jorge.webp",
   },
 ];
 
