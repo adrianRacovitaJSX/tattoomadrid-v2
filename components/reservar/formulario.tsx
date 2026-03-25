@@ -253,6 +253,7 @@ const ReservaForm = () => {
                   required
                   className="block w-full px-4 py-3 border border-zinc-300 dark:border-zinc-600 rounded-lg shadow-sm focus:ring-2 focus:ring-[#be8f52]/50 focus:border-[#be8f52] dark:bg-zinc-700 dark:text-white text-sm"
                   placeholder="Tu número de teléfono"
+                  maxLength={9}
                 />
               </div>
             </div>

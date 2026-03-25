@@ -157,6 +157,7 @@ const FormularioSection = () => {
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#be8f52]/50 focus:border-[#be8f52] outline-none transition-colors"
                     placeholder="Tu teléfono"
+                    maxLength={9}
                   />
                 </div>
                 <div>
