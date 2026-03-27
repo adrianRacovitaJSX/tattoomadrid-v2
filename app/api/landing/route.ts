@@ -12,7 +12,6 @@ const META_API_VERSION = "v21.0";
 const META_TEST_EVENT_CODE = process.env.META_TEST_EVENT_CODE || null;
 
 const N8N_LEAD_WEBHOOK_URL =
-  process.env.N8N_LEAD_WEBHOOK_URL ||
   "https://snstattoomadrid.app.n8n.cloud/webhook/nuevo-lead";
 
 /** Teléfono solo dígitos, prefijo 34 sin + (ej. 612 345 678 → 34612345678) */
