@@ -249,6 +249,8 @@ export function estadoLabel(estado: string | null): {
   switch (estado) {
     case "nuevo":
       return { label: "Nuevo", color: "bg-blue-500/20 text-blue-400" };
+    case "contactado":
+      return { label: "Contactado", color: "bg-cyan-500/20 text-cyan-400" };
     case "conversando":
       return { label: "Conversando", color: "bg-amber-500/20 text-amber-400" };
     case "cita_agendada":
