@@ -11,7 +11,7 @@ const Footer = () => {
   const pathname = usePathname();
   const currentYear = new Date().getFullYear();
 
-  if (pathname?.startsWith('/landing')) return null;
+  if (pathname?.startsWith('/landing') || pathname?.startsWith('/automations')) return null;
   
   // Configuración de animación
   const itemVariants = {

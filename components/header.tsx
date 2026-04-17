@@ -14,7 +14,7 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
 
-  if (pathname?.startsWith('/landing')) return null;
+  if (pathname?.startsWith('/landing') || pathname?.startsWith('/automations')) return null;
 
   // Detectar scroll para cambiar la apariencia del header
   useEffect(() => {

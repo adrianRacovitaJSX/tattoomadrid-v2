@@ -18,7 +18,9 @@ const COOKIE_CONSENT_KEY = 'cookie-consent';
 const CookieConsentBanner = () => {
   const pathname = usePathname();
   const hideOnLanding =
-    pathname === '/landing' || pathname.startsWith('/landing/');
+    pathname === '/landing' ||
+    pathname.startsWith('/landing/') ||
+    pathname.startsWith('/automations');
 
   const [showBanner, setShowBanner] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
