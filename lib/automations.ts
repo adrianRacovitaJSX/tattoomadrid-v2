@@ -110,6 +110,124 @@ export async function fetchRecentLeads(days = 7, limit = 20): Promise<Lead[]> {
   );
 }
 
+export type FunnelStage = {
+  key: string;
+  label: string;
+  count: number;
+  pct: number;
+};
+
+export type AnalyticsData = {
+  total: number;
+  funnel: FunnelStage[];
+  last30Days: Array<{ date: string; count: number }>;
+  revenueEstimate: number;
+  noShowRate: number;
+  avgDaysToCita: number;
+  agendadas: number;
+  completadas: number;
+};
+
+export async function fetchAnalytics(): Promise<AnalyticsData> {
+  const leads = await supabaseFetch<Lead[]>(
+    `leads?select=id,estado,fecha_entrada,fecha_cita,ultimo_contacto&order=fecha_entrada.desc&limit=5000`
+  );
+  const total = leads.length;
+
+  const counts: Record<string, number> = {};
+  for (const l of leads) counts[l.estado || "desconocido"] = (counts[l.estado || "desconocido"] || 0) + 1;
+
+  const getCount = (keys: string[]) => keys.reduce((acc, k) => acc + (counts[k] || 0), 0);
+  const nuevoN = counts["nuevo"] || 0;
+  const contactadoN = counts["contactado"] || 0;
+  const conversandoN = counts["conversando"] || 0;
+  const agendadoN = counts["cita_agendada"] || 0;
+  const completadoN = counts["completado"] || 0;
+
+  // Cumulative funnel (a lead at cita_agendada también pasó por los estados anteriores)
+  const stages: FunnelStage[] = [
+    { key: "nuevo", label: "Nuevo", count: total - getCount(["no_contactar"]), pct: 100 },
+    {
+      key: "contactado",
+      label: "Contactado",
+      count: contactadoN + conversandoN + agendadoN + completadoN,
+      pct: 0,
+    },
+    {
+      key: "conversando",
+      label: "Conversando",
+      count: conversandoN + agendadoN + completadoN,
+      pct: 0,
+    },
+    { key: "cita_agendada", label: "Cita agendada", count: agendadoN + completadoN, pct: 0 },
+    { key: "completado", label: "Completado", count: completadoN, pct: 0 },
+  ];
+  const base = stages[0].count || 1;
+  for (const s of stages) s.pct = Math.round((s.count / base) * 1000) / 10;
+
+  // Last 30 days
+  const now = new Date();
+  const buckets = new Map<string, number>();
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+    buckets.set(d.toISOString().slice(0, 10), 0);
+  }
+  for (const l of leads) {
+    if (!l.fecha_entrada) continue;
+    const k = new Date(l.fecha_entrada).toISOString().slice(0, 10);
+    if (buckets.has(k)) buckets.set(k, (buckets.get(k) || 0) + 1);
+  }
+  const last30Days = Array.from(buckets, ([date, count]) => ({ date, count }));
+
+  // Revenue estimate: señal 50€ por cita agendada + 150€ media por completada
+  const revenueEstimate = agendadoN * 50 + completadoN * 150;
+
+  // No-show rate: citas cuya fecha ya pasó y siguen en cita_agendada (no completadas)
+  const nowMs = Date.now();
+  const pastAgendadas = leads.filter(
+    (l) => l.estado === "cita_agendada" && l.fecha_cita && new Date(l.fecha_cita).getTime() < nowMs
+  ).length;
+  const totalPastScheduled = pastAgendadas + completadoN;
+  const noShowRate =
+    totalPastScheduled > 0
+      ? Math.round((pastAgendadas / totalPastScheduled) * 1000) / 10
+      : 0;
+
+  // Avg days from entrada to cita_agendada
+  const withCita = leads.filter((l) => l.fecha_cita && l.fecha_entrada);
+  const avgDaysToCita =
+    withCita.length > 0
+      ? Math.round(
+          (withCita.reduce((acc, l) => {
+            const d1 = new Date(l.fecha_entrada!).getTime();
+            const d2 = new Date(l.fecha_cita!).getTime();
+            return acc + Math.max(0, (d2 - d1) / (1000 * 60 * 60 * 24));
+          }, 0) /
+            withCita.length) *
+            10
+        ) / 10
+      : 0;
+
+  return {
+    total,
+    funnel: stages,
+    last30Days,
+    revenueEstimate,
+    noShowRate,
+    avgDaysToCita,
+    agendadas: agendadoN,
+    completadas: completadoN,
+  };
+}
+
+export async function fetchUpcomingCitas(days = 14): Promise<Lead[]> {
+  const from = new Date().toISOString();
+  const to = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
+  return supabaseFetch<Lead[]>(
+    `leads?estado=eq.cita_agendada&fecha_cita=gte.${from}&fecha_cita=lte.${to}&select=*&order=fecha_cita.asc`
+  );
+}
+
 export async function fetchActiveSessions(): Promise<
   { session_id: string; last_id: number; msg_count: number }[]
 > {
