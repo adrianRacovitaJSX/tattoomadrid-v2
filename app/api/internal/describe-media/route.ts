@@ -5,8 +5,6 @@ export const revalidate = 0;
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-const GEMINI_API_KEY = "AIzaSyBZRWZVkg767JVvefMx1_3hJffqqKbLw1Y";
-const WHAPI_BEARER = "2XaE5PolDYlYQBp3Nlstur3D8QT28c1j";
 const INTERNAL_TOKEN = "sns-n8n-vision-2026-x7q4";
 
 const IMAGE_PROMPT =
@@ -25,6 +23,15 @@ export async function POST(req: NextRequest) {
   const token = req.headers.get("x-internal-token");
   if (token !== INTERNAL_TOKEN) {
     return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
+  }
+
+  const geminiKey = process.env.GEMINI_API_KEY;
+  const whapiBearer = process.env.WHAPI_BEARER;
+  if (!geminiKey || !whapiBearer) {
+    return NextResponse.json(
+      { ok: false, error: "env_not_configured", description: "" },
+      { status: 503 }
+    );
   }
 
   let body: Body;
@@ -46,7 +53,7 @@ export async function POST(req: NextRequest) {
   try {
     const res = await fetch(url, {
       method: "GET",
-      headers: { Authorization: `Bearer ${WHAPI_BEARER}` },
+      headers: { Authorization: `Bearer ${whapiBearer}` },
       signal: AbortSignal.timeout(15000),
     });
     if (!res.ok) {
@@ -74,7 +81,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const gem = await fetch(
-      `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${geminiKey}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
