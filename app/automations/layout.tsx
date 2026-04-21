@@ -9,6 +9,7 @@ import {
   Workflow,
 } from "lucide-react";
 import { LiveRefresh } from "@/components/automations/live-refresh";
+import { LiveClock } from "@/components/automations/live-clock";
 
 export const metadata: Metadata = {
   title: "Automations · Saints & Sinners",
@@ -66,7 +67,10 @@ export default async function AutomationsLayout({
               </p>
             </div>
           </div>
-          <LiveRefresh initialTotal={initialTotal} />
+          <div className="flex items-center gap-2">
+            <LiveClock />
+            <LiveRefresh initialTotal={initialTotal} />
+          </div>
         </header>
 
         <nav className="mb-8 flex flex-wrap gap-2">

@@ -9,6 +9,7 @@ export type Lead = {
   fecha_cita: string | null;
   ultimo_contacto: string | null;
   num_seguimientos: number | null;
+  notas_agente: string | null;
 };
 
 export type ChatMessage = {
@@ -20,6 +21,124 @@ export type ChatMessage = {
     additional_kwargs?: Record<string, unknown>;
   };
 };
+
+export type ParsedChatMessage = {
+  id: number;
+  type: "human" | "ai" | "system";
+  rawContent: string;
+  bodyText: string;
+  kind: "text" | "image" | "audio" | "media_fallback" | "confirmation";
+  mediaDescription?: string;
+  citaAt?: string;
+};
+
+const CITA_RE = /\[CITA:\s*(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})[^\]]*\]/i;
+const IMG_WITH_TEXT_RE =
+  /^\[Imagen de referencia recibida\.\s*Descripción:\s*([\s\S]*?)\]\s*\n+Mensaje del cliente:\s*([\s\S]*)$/i;
+const IMG_ONLY_RE =
+  /^\[El cliente envía esta imagen como referencia[^\]]*Descripción:\s*([\s\S]*?)\]\s*$/i;
+const AUDIO_WITH_TEXT_RE =
+  /^\[Nota de voz recibida\.\s*Transcripción:\s*"([\s\S]*?)"\]\s*\n+Mensaje de texto adicional:\s*([\s\S]*)$/i;
+const AUDIO_ONLY_RE =
+  /^\[Nota de voz del cliente[^\]]*Transcripción:\s*"([\s\S]*?)"\]\s*$/i;
+const IMG_FALLBACK_RE = /^\[El cliente envió una imagen[^\]]*\]$/i;
+const AUDIO_FALLBACK_RE = /^\[El cliente envió una nota de voz[^\]]*\]$/i;
+
+export function parseChatMessage(msg: ChatMessage): ParsedChatMessage {
+  const raw = typeof msg.message.content === "string" ? msg.message.content : "";
+  const type = msg.message.type;
+
+  if (type === "human") {
+    const m1 = raw.match(IMG_WITH_TEXT_RE);
+    if (m1) {
+      return {
+        id: msg.id,
+        type,
+        rawContent: raw,
+        kind: "image",
+        bodyText: (m1[2] || "").trim(),
+        mediaDescription: m1[1].trim(),
+      };
+    }
+    const m2 = raw.match(IMG_ONLY_RE);
+    if (m2) {
+      return {
+        id: msg.id,
+        type,
+        rawContent: raw,
+        kind: "image",
+        bodyText: "",
+        mediaDescription: m2[1].trim(),
+      };
+    }
+    const m3 = raw.match(AUDIO_WITH_TEXT_RE);
+    if (m3) {
+      return {
+        id: msg.id,
+        type,
+        rawContent: raw,
+        kind: "audio",
+        bodyText: (m3[2] || "").trim(),
+        mediaDescription: m3[1].trim(),
+      };
+    }
+    const m4 = raw.match(AUDIO_ONLY_RE);
+    if (m4) {
+      return {
+        id: msg.id,
+        type,
+        rawContent: raw,
+        kind: "audio",
+        bodyText: "",
+        mediaDescription: m4[1].trim(),
+      };
+    }
+    if (IMG_FALLBACK_RE.test(raw)) {
+      return {
+        id: msg.id,
+        type,
+        rawContent: raw,
+        kind: "media_fallback",
+        bodyText: "Envió una imagen (no pudo describirse)",
+      };
+    }
+    if (AUDIO_FALLBACK_RE.test(raw)) {
+      return {
+        id: msg.id,
+        type,
+        rawContent: raw,
+        kind: "media_fallback",
+        bodyText: "Envió una nota de voz (no pudo transcribirse)",
+      };
+    }
+    return {
+      id: msg.id,
+      type,
+      rawContent: raw,
+      kind: "text",
+      bodyText: raw,
+    };
+  }
+
+  const citaMatch = raw.match(CITA_RE);
+  if (citaMatch) {
+    return {
+      id: msg.id,
+      type,
+      rawContent: raw,
+      kind: "confirmation",
+      bodyText: raw.replace(CITA_RE, "").trim(),
+      citaAt: citaMatch[1],
+    };
+  }
+  return {
+    id: msg.id,
+    type,
+    rawContent: raw,
+    kind: "text",
+    bodyText: raw,
+  };
+}
 
 export type Execution = {
   id: string;

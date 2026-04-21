@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import { Search, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { MessageCircle, Search, X } from "lucide-react";
 import { EstadoBadge } from "@/components/automations/estado-badge";
 import { formatPhone, formatRelative, type Lead } from "@/lib/automations";
 
@@ -21,6 +21,25 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
   const [search, setSearch] = useState("");
   const [estado, setEstado] = useState<string>("");
   const [sinceDays, setSinceDays] = useState<number>(0);
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (
+        e.key === "/" &&
+        !(e.target instanceof HTMLInputElement) &&
+        !(e.target instanceof HTMLTextAreaElement)
+      ) {
+        e.preventDefault();
+        searchRef.current?.focus();
+      } else if (e.key === "Escape" && document.activeElement === searchRef.current) {
+        setSearch("");
+        searchRef.current?.blur();
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -49,8 +68,9 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
         <div className="relative flex-1 min-w-[240px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
           <input
+            ref={searchRef}
             type="text"
-            placeholder="Buscar por nombre, teléfono, email o descripción..."
+            placeholder="Buscar por nombre, teléfono, email o descripción… (/)"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-9 pr-9 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600"
@@ -118,6 +138,7 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
                 <th className="px-4 py-3 text-right font-medium">
                   Últ. contacto
                 </th>
+                <th className="px-4 py-3 text-center font-medium w-12">WA</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-800">
@@ -145,6 +166,18 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
                   </td>
                   <td className="px-4 py-3 text-right text-zinc-500 text-xs">
                     {formatRelative(l.ultimo_contacto)}
+                  </td>
+                  <td className="px-4 py-3 text-center">
+                    <a
+                      href={`https://wa.me/${l.telefono.replace(/\D/g, "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="inline-flex h-7 w-7 items-center justify-center rounded-md text-green-400/70 hover:bg-green-500/10 hover:text-green-300"
+                      title="Abrir WhatsApp"
+                    >
+                      <MessageCircle className="h-3.5 w-3.5" />
+                    </a>
                   </td>
                 </tr>
               ))}
