@@ -7,6 +7,7 @@ export const maxDuration = 60;
 
 const GEMINI_API_KEY = "AIzaSyBZRWZVkg767JVvefMx1_3hJffqqKbLw1Y";
 const WHAPI_BEARER = "2XaE5PolDYlYQBp3Nlstur3D8QT28c1j";
+const INTERNAL_TOKEN = "sns-n8n-vision-2026-x7q4";
 
 const IMAGE_PROMPT =
   "Describe brevemente en español esta imagen que un cliente envía como referencia para un tatuaje. Incluye: estilo (realismo, geométrico, blackwork, old school, japonés, lettering, acuarela, minimalista...), qué elementos contiene o se tatuarían, tamaño relativo si se aprecia, y tono emocional. Máximo 3 frases, directo al grano.";
@@ -21,6 +22,11 @@ type Body = {
 };
 
 export async function POST(req: NextRequest) {
+  const token = req.headers.get("x-internal-token");
+  if (token !== INTERNAL_TOKEN) {
+    return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
+  }
+
   let body: Body;
   try {
     body = (await req.json()) as Body;
@@ -31,10 +37,7 @@ export async function POST(req: NextRequest) {
   const url = body.mediaUrl;
   const kind = body.mediaKind === "audio" ? "audio" : "image";
   if (!url) {
-    return NextResponse.json(
-      { ok: false, error: "missing_mediaUrl", description: "" },
-      { status: 400 }
-    );
+    return NextResponse.json({ ok: false, error: "missing_mediaUrl", description: "" });
   }
 
   let mimeType = body.mimeType || (kind === "image" ? "image/jpeg" : "audio/ogg");
