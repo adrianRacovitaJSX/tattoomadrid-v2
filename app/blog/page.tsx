@@ -2,6 +2,19 @@ import { blogPosts } from './posts';
 import Link from 'next/link';
 import ScrollReveal from '@/components/ui/scroll-reveal';
 import { Calendar, ArrowRight } from 'lucide-react';
+import JsonLd from '@/components/json-ld';
+import { buildMetadata } from '@/lib/seo';
+import { breadcrumbSchema } from '@/lib/schema';
+
+export const metadata = buildMetadata({
+  title: 'Blog de Tatuajes — Tendencias, Cuidados y Consejos de Saints & Sinners',
+  description: 'Artículos sobre tendencias en tatuajes, cuidados post-tatuaje, dolor por zona y consejos del equipo de Saints & Sinners Tattoo Madrid.',
+  path: '/blog',
+  ogTitle: 'Blog de Saints & Sinners Tattoo Madrid',
+  ogKicker: 'Tendencias · Cuidados · Consejos',
+  mdSlug: 'blog',
+  keywords: ['blog tatuajes Madrid', 'tendencias tatuajes', 'cuidar tatuaje', 'dolor tatuaje'],
+});
 
 export default function BlogPage() {
   return (
@@ -34,6 +47,13 @@ export default function BlogPage() {
         </svg>
       </div>
       
+      <JsonLd
+        id="ld-breadcrumb-blog"
+        data={breadcrumbSchema([
+          { name: 'Inicio', path: '/' },
+          { name: 'Blog', path: '/blog' },
+        ])}
+      />
       <div className="container mx-auto px-4 md:px-8 relative z-10">
         <ScrollReveal direction="up" className="max-w-3xl mx-auto text-center mb-12">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">

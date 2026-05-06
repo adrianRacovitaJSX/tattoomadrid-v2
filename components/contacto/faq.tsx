@@ -3,37 +3,12 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { ChevronDown } from 'lucide-react';
-
-interface FaqItem {
-  question: string;
-  answer: React.ReactNode;
-}
+import { CONTACT_FAQS } from '@/lib/faqs';
 
 const FaqSection = () => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
-  
-  const faqs: FaqItem[] = [
-    {
-      question: "¿Cuánto tiempo tardáis en responder a una consulta?",
-      answer: "Nos comprometemos a responder todas las consultas en un plazo máximo de 24-48 horas laborables. Para consultas urgentes, te recomendamos llamarnos directamente."
-    },
-    {
-      question: "¿Cómo funciona el proceso de reserva de cita?",
-      answer: "Una vez recibamos tu solicitud, te contactaremos para confirmar detalles y disponibilidad. Para confirmar la cita, solicitamos un depósito de 50€ que se descuenta del precio final del tatuaje. Este depósito garantiza tu fecha y permite a nuestros artistas comenzar a trabajar en tu diseño."
-    },
-    {
-      question: "¿Puedo solicitar un presupuesto sin compromiso?",
-      answer: "Sí, ofrecemos presupuestos sin compromiso. Para obtener un presupuesto más preciso, es recomendable que nos proporciones detalles sobre el diseño, tamaño y ubicación del tatuaje, idealmente con referencias visuales."
-    },
-    {
-      question: "¿Qué formas de pago aceptáis?",
-      answer: "Aceptamos efectivo, tarjetas de crédito/débito, transferencia bancaria y Bizum. Para el depósito inicial, preferimos transferencia bancaria o Bizum."
-    },
-    {
-      question: "¿Necesito una consulta presencial antes del tatuaje?",
-      answer: "Para tatuajes de tamaño mediano o grande, recomendamos una consulta presencial para discutir todos los detalles. Para diseños pequeños o sencillos, podemos gestionar la consulta online. En ambos casos, la consulta es gratuita."
-    }
-  ];
+
+  const faqs = CONTACT_FAQS;
   
   return (
     <section className="py-16 bg-gray-50 dark:bg-zinc-900">

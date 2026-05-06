@@ -1,0 +1,41 @@
+# Saints & Sinners Tattoo Madrid
+
+> Estudio de tatuajes profesional en Madrid (España) desde 2008. Tatuajes personalizados, piercing, micropigmentación y eliminación láser. Equipo especializado en realismo, chicano, neotradicional y fine line. Confirmamos las citas en menos de 24 horas.
+
+Marca: Saints & Sinners Tattoo Madrid (también Saints and Sinners by Gamboa)
+Sitio web: https://tattoomadrid.com
+Idioma: español (es-ES)
+Ubicación: Madrid, Comunidad de Madrid, España
+Contacto: info@tattoomadrid.com
+Redes sociales:
+- Instagram: https://www.instagram.com/saintsandsinnersmadrid/
+- TikTok:    https://www.tiktok.com/@saintsandsinnersbygamboa
+
+## Páginas principales
+
+- [Inicio](https://tattoomadrid.com/md/index): presentación del estudio, equipo y servicios destacados.
+- [Servicios](https://tattoomadrid.com/md/servicios): catálogo completo (tatuaje personalizado, piercing, micropigmentación, eliminación láser, diseño exclusivo) con precios "desde", tabla comparativa y FAQ.
+- [Reservar](https://tattoomadrid.com/md/reservar): formulario de reserva, depósito de 50 €, formas de pago.
+- [Contacto](https://tattoomadrid.com/md/contacto): datos de contacto, FAQ del proceso de presupuesto y consulta presencial.
+
+## Blog
+
+- [Blog (índice)](https://tattoomadrid.com/md/blog): artículos del equipo sobre tatuaje.
+- [Tendencias en tatuajes 2025](https://tattoomadrid.com/md/blog/tendencias-tatuajes-2025): cinco corrientes que dominan 2025 (minimalista, neotradicional, microrealismo, biomecánico).
+- [¿Duele hacerse un tatuaje?](https://tattoomadrid.com/md/blog/duele-hacerse-tatuaje): tabla de dolor por zona del cuerpo y consejos prácticos.
+- [Cómo cuidar tu tatuaje recién hecho](https://tattoomadrid.com/md/blog/cuidar-tatuaje-recien-hecho): rutina día a día, errores frecuentes a evitar y duración total de cicatrización.
+
+## Optional
+
+- [Versión completa concatenada (llms-full.txt)](https://tattoomadrid.com/llms-full.txt): todo el contenido en un único Markdown.
+- [Sitemap XML](https://tattoomadrid.com/sitemap.xml): listado de URLs HTML del sitio.
+
+## Páginas legales (no indexadas)
+
+- https://tattoomadrid.com/privacidad
+- https://tattoomadrid.com/aviso-legal
+- https://tattoomadrid.com/cookies
+
+## Política de uso por crawlers IA
+
+Permitimos el rastreo y la cita de nuestro contenido por motores generativos (ChatGPT Search, Perplexity, Claude, Gemini, Copilot, You.com, Mistral) siempre que se indique la fuente con enlace a la página correspondiente.

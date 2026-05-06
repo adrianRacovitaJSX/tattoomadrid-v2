@@ -4,12 +4,24 @@ export interface BlogPost {
   content: string;
   date: string;
   slug: string;
+  excerpt: string;
+  image: string;
+  keywords: string[];
 }
 
 export const blogPosts: BlogPost[] = [
   {
     id: "1",
     title: "Tendencias en Tatuajes 2025: Diseños que Están Marcando la Diferencia",
+    excerpt:
+      "Repaso completo a las tendencias de tatuajes que dominarán 2025: minimalismo, neotradicional a color, microrealismo, biomecánico y más.",
+    image: "/images/tattooo.jpg",
+    keywords: [
+      "tendencias tatuajes 2025",
+      "tatuajes minimalistas",
+      "neotradicional",
+      "microrealismo",
+    ],
     content: `¿Estás pensando en hacerte un tatuaje en 2025? Aquí te mostramos los estilos y diseños que están dominando la escena este año. Desde lo minimalista hasta lo maximalista, estas son las tendencias de tatuajes que no querrás perderte.
 
 ✨ 1. Tatuajes Minimalistas: Menos es más
@@ -37,6 +49,15 @@ Si estás buscando ideas o quieres personalizar uno de estos estilos, en nuestro
   {
     id: "2",
     title: "¿Duele Hacerse un Tatuaje? Esto es lo que Debes Saber Según su Ubicación",
+    excerpt:
+      "Guía sobre el dolor al tatuarse según la zona del cuerpo, factores que influyen y consejos prácticos para tu primera sesión.",
+    image: "/images/tattooo.jpg",
+    keywords: [
+      "duele hacerse un tatuaje",
+      "dolor tatuaje por zona",
+      "primer tatuaje",
+      "consejos tatuaje",
+    ],
     content: `Una de las preguntas más frecuentes que recibimos en el estudio es:
 "¿Cuánto duele hacerse un tatuaje?"
 La respuesta corta es: depende. Vamos a explicarte todo sobre el dolor al tatuarse, según la zona del cuerpo.
@@ -71,6 +92,15 @@ Te guiamos en todo el proceso para que tu experiencia sea lo más cómoda posibl
   {
     id: "3",
     title: "Cómo Cuidar tu Tatuaje Recién Hecho: Guía Completa Día a Día",
+    excerpt:
+      "Guía día a día para curar correctamente un tatuaje recién hecho: limpieza, cremas, costras, qué evitar y cuándo reanudar tu rutina.",
+    image: "/images/tattooo.jpg",
+    keywords: [
+      "cuidar tatuaje recién hecho",
+      "curación tatuaje",
+      "post tatuaje",
+      "crema tatuaje",
+    ],
     content: `Un buen tatuaje no solo depende del diseño o del tatuador, sino del cuidado posterior. Aquí tienes una guía completa para curar tu tatuaje recién hecho, paso a paso, para que cicatrice bien y luzca perfecto.
 
 📆 Día 1: Después de la sesión

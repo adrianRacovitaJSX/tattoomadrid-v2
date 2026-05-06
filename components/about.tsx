@@ -113,7 +113,7 @@ const AboutSection = () => {
                 </p>
                 
                 <p>
-                  Nuestro equipo de artistas del estudio combina técnicas tradicionales con innovaciones contemporáneas, ofreciendo estilos que van desde el clásico Old School hasta el detallado Realismo y la elegancia del Fine Line.
+                  Nuestro equipo combina técnicas tradicionales con innovaciones contemporáneas, ofreciendo estilos que van desde el clásico Old School hasta el detallado Realismo y la elegancia del Fine Line.
                 </p>
                 
                 <p>
@@ -156,9 +156,9 @@ const AboutSection = () => {
               <ScrollReveal delay={0.3} direction="up">
                 <Button variant="default" size="lg" className="mt-6 bg-[#be8f52] hover:bg-[#a17a45] text-white border-none"
                 onClick={() => {
-                  window.location.href = '/artistas';
+                  window.location.href = '/servicios';
                 }}>
-                  Conoce a nuestros artistas
+                  Descubre nuestros servicios
                 </Button>
               </ScrollReveal>
             </ScrollReveal>

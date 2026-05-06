@@ -2,37 +2,12 @@
 
 import React, { useState } from 'react';
 import { ChevronDown, HelpCircle } from 'lucide-react';
-
-interface FaqItem {
-  question: string;
-  answer: string;
-}
+import { SERVICES_FAQS } from '@/lib/faqs';
 
 const PreguntasFrecuentesSection = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
-  
-  const faqs: FaqItem[] = [
-    {
-      question: "¿Cuál es el proceso para agendar una cita?",
-      answer: "Para agendar una cita, puedes contactarnos por teléfono, email o a través del formulario de contacto en nuestra web. Te responderemos en menos de 24 horas para confirmar disponibilidad y acordar una fecha para tu sesión o consulta previa."
-    },
-    {
-      question: "¿Necesito una consulta previa antes de tatuarme?",
-      answer: "Para tatuajes personalizados, recomendamos siempre una consulta previa (gratuita) para discutir el diseño, tamaño, ubicación y presupuesto. Para diseños pequeños o flash, no es necesaria una consulta previa, pero siempre es recomendable."
-    },
-    {
-      question: "¿Cuánto cuesta un tatuaje?",
-      answer: "El precio varía según el tamaño, complejidad, ubicación y artista elegido. Nuestras tarifas comienzan en 70€ para piezas pequeñas. Durante la consulta te proporcionaremos un presupuesto detallado. Trabajamos tanto por sesión como por proyecto completo."
-    },
-    {
-      question: "¿Es seguro hacerse un tatuaje o piercing?",
-      answer: "Sí, seguimos estrictos protocolos de higiene y seguridad. Utilizamos materialas esterilizados o desechables, y nuestros artistas están certificados en control de infecciones y primeros auxilios. Después de cada procedimiento, recibirás instrucciones detalladas para el cuidado."
-    },
-    {
-      question: "¿Cuánto tiempo tarda en sanar un tatuaje?",
-      answer: "La sanación superficial toma aproximadamente 2 semanas, mientras que la sanación completa puede tomar hasta 4-6 semanas. Durante este tiempo, deberás seguir las instrucciones de cuidado proporcionadas por tu tatuador para obtener el mejor resultado."
-    }
-  ];
+
+  const faqs = SERVICES_FAQS;
   
   const toggleFaq = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);

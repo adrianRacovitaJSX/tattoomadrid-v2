@@ -6,6 +6,25 @@ import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Tabl
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
+import JsonLd from '@/components/json-ld';
+import RelatedCta from '@/components/blog/related-cta';
+import TLDR from '@/components/tldr';
+import { buildMetadata } from '@/lib/seo';
+import { blogPostingSchema, breadcrumbSchema } from '@/lib/schema';
+
+const POST = blogPosts.find((p) => p.slug === 'duele-hacerse-tatuaje')!;
+
+export const metadata = buildMetadata({
+  title: POST.title,
+  description: POST.excerpt,
+  path: `/blog/${POST.slug}`,
+  type: 'article',
+  publishedTime: POST.date,
+  ogTitle: POST.title,
+  ogKicker: 'Blog · Saints & Sinners Tattoo',
+  mdSlug: `blog/${POST.slug}`,
+  keywords: POST.keywords,
+});
 
 export default function DoloresTatuajePage() {
   // Obtenemos el post actual
@@ -118,6 +137,24 @@ export default function DoloresTatuajePage() {
       {/* Gradiente */}
       <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/80 to-white dark:via-zinc-950/80 dark:to-zinc-950"></div>
       
+      <JsonLd
+        id="ld-article-duele"
+        data={blogPostingSchema({
+          title: POST.title,
+          description: POST.excerpt,
+          slug: POST.slug,
+          datePublished: POST.date,
+          image: POST.image,
+        })}
+      />
+      <JsonLd
+        id="ld-breadcrumb-duele"
+        data={breadcrumbSchema([
+          { name: 'Inicio', path: '/' },
+          { name: 'Blog', path: '/blog' },
+          { name: POST.title, path: `/blog/${POST.slug}` },
+        ])}
+      />
       <div className="container mx-auto px-4 md:px-8 relative z-10">
         <div className="max-w-4xl mx-auto">
           {/* Migas de pan */}
@@ -166,6 +203,10 @@ export default function DoloresTatuajePage() {
                   </button>
                 </div>
                 
+                <TLDR>
+                  Hacerse un tatuaje genera una molestia variable según la zona del cuerpo, tu tolerancia personal y la técnica del tatuador. Las zonas con más grasa y músculo (antebrazo, hombro, muslo) duelen poco; las cercanas al hueso (costillas, tobillos, esternón) duelen mucho más. Una sesión típica dura 1–4 horas y la incomodidad es soportable con preparación adecuada.
+                </TLDR>
+
                 {/* Introducción */}
                 <div className="prose prose-lg max-w-none dark:prose-invert prose-a:text-[#be8f52] prose-blockquote:border-l-[#be8f52] prose-strong:text-[#be8f52] prose-headings:text-gray-900 dark:prose-headings:text-white mb-8">
                   <blockquote className="pl-6 italic text-xl">
@@ -351,6 +392,8 @@ export default function DoloresTatuajePage() {
                   </CardFooter>
                 </Card>
                 
+                <RelatedCta servicesAnchor="seguridad" servicesLabel="Tatuajes con máxima seguridad e higiene" />
+
                 {/* Separador final */}
                 <Separator className="my-8 bg-gray-200 dark:bg-zinc-800" />
                 

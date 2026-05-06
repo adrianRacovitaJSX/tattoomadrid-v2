@@ -43,3 +43,6 @@ next-env.d.ts
 # macOS metadata
 ._*
 .DS_Store
+
+# Embedded tools (own repos)
+/claude-seo

@@ -1,16 +1,37 @@
 import ReservaForm from "@/components/reservar/formulario";
 import { MapPin, Clock, Phone, Mail } from 'lucide-react';
 import Link from 'next/link';
+import JsonLd from "@/components/json-ld";
+import { buildMetadata } from "@/lib/seo";
+import { breadcrumbSchema, reserveActionSchema } from "@/lib/schema";
 
-export const metadata = {
-  title: 'Reserva Tu Cita | Estudio de Tatuajes en Madrid',
-  description: 'Reserva una cita en nuestro estudio de tatuajes en Madrid. Completa el formulario con tus datos y preferencias, y nos pondremos en contacto contigo para confirmar tu sesión.',
-  keywords: 'reservar cita tatuaje Madrid, cita estudio tatuajes, reserva tatuaje, Saints and Sinners, formulario reserva tatuaje'
-};
+export const metadata = buildMetadata({
+  title: "Reserva tu Cita — Estudio de Tatuajes en Madrid",
+  description:
+    "Reserva una sesión con Saints & Sinners Tattoo Madrid. Completa el formulario y te confirmamos tu cita en menos de 24 horas. Tatuaje, piercing y micropigmentación.",
+  path: "/reservar",
+  ogTitle: "Reserva tu cita en Saints & Sinners",
+  ogKicker: "Confirmamos en menos de 24 h",
+  mdSlug: "reservar",
+  keywords: [
+    "reservar cita tatuaje Madrid",
+    "cita estudio tatuajes",
+    "reserva tatuaje",
+    "formulario reserva tatuaje",
+  ],
+});
 
 export default function Page() {
   return (
     <div className="bg-zinc-50 dark:bg-zinc-900 relative overflow-hidden pt-20 pb-20">
+      <JsonLd
+        id="ld-breadcrumb-reservar"
+        data={breadcrumbSchema([
+          { name: "Inicio", path: "/" },
+          { name: "Reservar", path: "/reservar" },
+        ])}
+      />
+      <JsonLd id="ld-reserve-action" data={reserveActionSchema()} />
       {/* Elementos decorativos de fondo */}
       <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-[#be8f52]/20 to-transparent"></div>
       <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#be8f52]/20 to-transparent"></div>
@@ -46,15 +67,16 @@ export default function Page() {
                 
                 {/* Mapa */}
                 <div className="aspect-video w-full rounded-lg overflow-hidden mb-6 bg-zinc-200 dark:bg-zinc-700">
-                  <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3036.4850207400053!2d-3.6540752831745196!3d40.4456140593348!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd422fa16c3c3b59%3A0x9ceb56669402ba2f!2sC.%20de%20los%20Hermanos%20G%C3%B3mez%2C%205%2C%2028017%20Madrid!5e0!3m2!1ses!2ses!4v1715866394965!5m2!1ses!2ses" 
-                    width="100%" 
-                    height="100%" 
-                    style={{ border: 0 }} 
-                    allowFullScreen 
-                    loading="lazy" 
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3036.4850207400053!2d-3.6540752831745196!3d40.4456140593348!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd422fa16c3c3b59%3A0x9ceb56669402ba2f!2sC.%20de%20los%20Hermanos%20G%C3%B3mez%2C%205%2C%2028017%20Madrid!5e0!3m2!1ses!2ses!4v1715866394965!5m2!1ses!2ses"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
                     className="w-full h-full"
+                    title="Ubicación de Saints & Sinners Tattoo Madrid en Google Maps"
                   ></iframe>
                 </div>
                 

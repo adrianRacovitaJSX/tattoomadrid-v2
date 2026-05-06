@@ -61,6 +61,7 @@ const CookieConsentBanner = () => {
       timestamp: Date.now()
     };
     localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify(consentWithTimestamp));
+    window.dispatchEvent(new CustomEvent('cookie-consent-updated', { detail: consentWithTimestamp }));
     setConsent(consentWithTimestamp);
     setShowBanner(false);
     setShowSettings(false);

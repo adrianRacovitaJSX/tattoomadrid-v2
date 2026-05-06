@@ -58,18 +58,19 @@ const HeroSection = () => {
         variants={containerVariants}
       >
         <div className="max-w-3xl mx-auto text-center">
-          {/* SLOGAN principal animado con Split Text */}
-          <div className="mb-4 md:mb-6">
-            <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter mb-2 md:mb-3">
-              <SplitText 
-                text="NUESTROS" 
+          {/* H1 semántico — el texto plano queda accesible para Googlebot,
+              las animaciones se renderizan visualmente sobre él */}
+          <h1 className="mb-4 md:mb-6">
+            <span className="sr-only">Servicios de tatuajes, piercing y micropigmentación en Madrid</span>
+            <span aria-hidden="true" className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter mb-2 md:mb-3">
+              <SplitText
+                text="NUESTROS"
                 className="text-[#be8f52] leading-tight"
                 delay={0.5}
                 stagger={0.05}
               />
-            </div>
-
-            <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white">
+            </span>
+            <span aria-hidden="true" className="block text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white">
               <ShinyText
                 text=""
                 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold relative mb-2 md:mb-4"
@@ -78,8 +79,8 @@ const HeroSection = () => {
               >
                 <span>SERVICIOS</span>
               </ShinyText>
-            </div>
-          </div>
+            </span>
+          </h1>
           
           <motion.p 
             className="text-base md:text-lg text-gray-300 mb-4 md:mb-6 max-w-2xl mx-auto px-2"

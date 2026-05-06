@@ -14,41 +14,45 @@ interface StatProps {
   color: string;
 }
 
-const CountUpAnimation: React.FC<{ targetValue: number, duration: number, prefix?: string, suffix?: string }> = ({ 
-  targetValue, 
-  duration, 
-  prefix = "", 
-  suffix = "" 
+const CountUpAnimation: React.FC<{ targetValue: number, duration: number, prefix?: string, suffix?: string }> = ({
+  targetValue,
+  duration,
+  prefix = "",
+  suffix = ""
 }) => {
-  const [count, setCount] = useState(0);
+  // SEO: el SSR debe servir el valor real, no "0".
+  // En cliente, al entrar en viewport, reseteamos a 0 y animamos hasta targetValue.
+  const [count, setCount] = useState(targetValue);
   const nodeRef = useRef(null);
   const isInView = useInView(nodeRef, { once: true, amount: 0.5 });
-  
+
   useEffect(() => {
     if (!isInView) return;
-    
+
+    setCount(0);
+
     let startTime: number;
     let animationFrame: number;
-    
+
     const updateCount = (timestamp: number) => {
       if (!startTime) startTime = timestamp;
       const progress = Math.min((timestamp - startTime) / duration, 1);
       setCount(Math.floor(progress * targetValue));
-      
+
       if (progress < 1) {
         animationFrame = requestAnimationFrame(updateCount);
       }
     };
-    
+
     animationFrame = requestAnimationFrame(updateCount);
-    
+
     return () => {
       if (animationFrame) {
         cancelAnimationFrame(animationFrame);
       }
     };
   }, [isInView, targetValue, duration]);
-  
+
   return (
     <span ref={nodeRef} className="tabular-nums">
       {prefix}{count}{suffix}

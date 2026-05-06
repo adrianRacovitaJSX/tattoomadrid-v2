@@ -208,11 +208,11 @@ function Hero() {
    3. PORTFOLIO / GALERÍA
    ═══════════════════════════════════════════ */
 const portfolioItems = [
-  { title: "Espalda completa realismo", src: "/IMG_0843.jpg", aspect: "aspect-[3/4]", span: "md:col-span-2 md:row-span-2" },
-  { title: "Pierna completa chicano", src: "/AA4A48F6-6483-4F4B-8A71-45887F2B7150.jpg", aspect: "aspect-[3/4]", span: "" },
+  { title: "Espalda completa realismo", src: "/IMG_0843.webp", aspect: "aspect-[3/4]", span: "md:col-span-2 md:row-span-2" },
+  { title: "Pierna completa chicano", src: "/AA4A48F6-6483-4F4B-8A71-45887F2B7150.webp", aspect: "aspect-[3/4]", span: "" },
   { title: "Manga realismo mitológico", src: "/resenas-sns/adrian.webp", aspect: "aspect-[3/4]", span: "" },
-  { title: "Chicano", src: "/IMG_4380.jpg", aspect: "aspect-[3/4]", span: "md:row-span-2" },
-  { title: "Manga japonesa", src: "/IMG_4381.jpg", aspect: "aspect-[3/4]", span: "" },
+  { title: "Chicano", src: "/IMG_4380.webp", aspect: "aspect-[3/4]", span: "md:row-span-2" },
+  { title: "Manga japonesa", src: "/IMG_4381.webp", aspect: "aspect-[3/4]", span: "" },
   { title: "Manga calavera y rosas", src: "/images/portfolio/gamboa-1.webp", aspect: "aspect-[3/4]", span: "" },
 ];
 

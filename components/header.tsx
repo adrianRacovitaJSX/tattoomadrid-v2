@@ -45,7 +45,6 @@ const Header = () => {
 
   const navLinks = [
     { name: 'Servicios', href: '/servicios' },
-    { name: 'Artistas', href: '/artistas' },
     { name: 'Blog', href: '/blog' },
     { name: 'Contacto', href: '/contacto' },
   ];
@@ -117,12 +116,14 @@ const Header = () => {
           <div className="relative z-10 w-1/4">
             <Link href="/" className="flex items-center gap-2">
               <div className="relative h-10 w-20 md:h-12 md:w-24 overflow-visible">
-                <Image 
-                  src="/images/logo-gamboa.png" 
-                  alt="Saints & Sinners" 
+                <Image
+                  src="/images/logo-gamboa.png"
+                  alt="Saints & Sinners Tattoo Madrid"
                   fill
+                  sizes="(min-width: 768px) 96px, 80px"
                   className="object-contain hover:scale-105 transition-transform duration-300"
                   priority
+                  fetchPriority="high"
                 />
                 {/* Efecto de brillo detrás del logo */}
                 <div className="absolute -inset-1 bg-gradient-to-r from-[#be8f52]/0 via-[#be8f52]/30 to-[#be8f52]/0 rounded-full blur-lg opacity-0 hover:opacity-100 transition-opacity duration-700 -z-10"></div>

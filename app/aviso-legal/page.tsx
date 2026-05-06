@@ -1,9 +1,12 @@
 import React from 'react';
+import { buildMetadata } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Aviso Legal | Saints & Sinners Tattoo Madrid',
+export const metadata = buildMetadata({
+  title: 'Aviso Legal',
   description: 'Aviso legal y condiciones de uso de Saints & Sinners Tattoo Madrid. Información sobre propiedad intelectual, exención de responsabilidades y legislación aplicable.',
-};
+  path: '/aviso-legal',
+  noindex: true,
+});
 
 export default function AvisoLegalPage() {
   return (

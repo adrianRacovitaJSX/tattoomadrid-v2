@@ -1,9 +1,12 @@
 import React from 'react';
+import { buildMetadata } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Política de Privacidad | Saints & Sinners Tattoo Madrid',
+export const metadata = buildMetadata({
+  title: 'Política de Privacidad',
   description: 'Política de privacidad de Saints & Sinners Tattoo Madrid. Información sobre el tratamiento de sus datos personales y derechos RGPD.',
-};
+  path: '/privacidad',
+  noindex: true,
+});
 
 export default function PrivacidadPage() {
   return (
