@@ -28,13 +28,28 @@ const nextConfig: NextConfig = {
   productionBrowserSourceMaps: false,
   images: {
     formats: ["image/avif", "image/webp"],
-    remotePatterns: [],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "cdn.sanity.io",
+        pathname: "/images/**",
+      },
+    ],
   },
   async headers() {
     return [
       {
         source: "/:path*",
         headers: securityHeaders,
+      },
+      // El Studio embebido /admin no debe indexarse: el X-Robots-Tag global
+      // sobrescribiría el `robots: { index: false }` del layout, así que aquí
+      // forzamos noindex,nofollow específicamente para /admin/*.
+      {
+        source: "/admin/:path*",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+        ],
       },
     ];
   },

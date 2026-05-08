@@ -1,9 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
-import Header from "@/components/header";
-import Footer from "@/components/footer";
-import PageTransition from "@/components/ui/page-transition";
+import SiteFrame from "@/components/site-frame";
 import CookieConsentBanner from "@/components/cookie-consent";
 import GoogleAnalytics from "@/components/google-analytics";
 import JsonLd from "@/components/json-ld";
@@ -145,15 +143,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="flex flex-col min-h-screen">
-            <Header />
-            <main className="flex-grow">
-              <PageTransition>
-                {children}
-              </PageTransition>
-            </main>
-            <Footer />
-          </div>
+          <SiteFrame>{children}</SiteFrame>
           <CookieConsentBanner />
         </ThemeProvider>
         <WebVitals />

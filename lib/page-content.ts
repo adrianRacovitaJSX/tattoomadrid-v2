@@ -127,122 +127,9 @@ Efectivo, tarjetas de crédito/débito, transferencia bancaria y Bizum.
 Para tatuajes medianos o grandes recomendamos consulta presencial. Para diseños pequeños se gestiona online. La consulta es siempre gratuita.
 `;
 
-const BLOG_INDEX_MD = `# Blog de Saints & Sinners Tattoo Madrid
-
-> Artículos del equipo de Saints & Sinners sobre tendencias en tatuajes, dolor por zona, cuidados post-tatuaje y consejos para tu primera sesión.
-
-## Artículos disponibles
-
-- [Tendencias en tatuajes 2025](https://tattoomadrid.com/blog/tendencias-tatuajes-2025): repaso a los cinco estilos que dominan 2025 (minimalista, neotradicional, microrealismo, biomecánico).
-- [¿Duele hacerse un tatuaje?](https://tattoomadrid.com/blog/duele-hacerse-tatuaje): guía del nivel de dolor por zona del cuerpo y consejos para reducirlo.
-- [Cómo cuidar tu tatuaje recién hecho](https://tattoomadrid.com/blog/cuidar-tatuaje-recien-hecho): rutina día a día de curación y errores frecuentes a evitar.
-`;
-
-const BLOG_TENDENCIAS_MD = `# Tendencias en tatuajes 2025
-
-> Las tendencias de tatuajes en 2025 se mueven en cinco grandes corrientes: minimalista, neotradicional a color, simbología astral, microrealismo y biomecánico/cyberpunk. El minimalismo y el microrealismo siguen liderando entre quienes se tatúan por primera vez, mientras que el color regresa con fuerza tras años dominados por blackwork.
-
-## 1. Tatuajes minimalistas
-
-Diseños pequeños y delicados con líneas finas, símbolos discretos (lunas, corazones, constelaciones) o tipografías personalizadas. Es la elección más popular entre primeros tatuajes.
-
-## 2. Neotradicional a color
-
-Después de años dominados por blackwork, el color vuelve con fuerza. Estilos neotradicional y acuarela se imponen entre quienes buscan piezas vibrantes.
-
-## 3. Inspiración astral y espiritual
-
-Símbolos zodiacales, fases lunares, geometría sagrada, ojos y manos. Tatuajes con carga simbólica además de impacto visual.
-
-## 4. Microrealismo y retratos
-
-Hiperrealismo en miniatura. Ideal para homenajes a personas, mascotas o ídolos gracias a la mejora de agujas y técnicas.
-
-## 5. Biomecánico y cyberpunk
-
-Estética futurista con fusión de elementos mecánicos y orgánicos. Vuelve con fuerza, especialmente en brazos y piernas.
-
-## Comparativa rápida
-
-| Estilo | Popularidad | Dolor | Curación |
-|---|---|---|---|
-| Minimalista | Alta | Baja | 1–2 semanas |
-| Neotradicional color | Media-Alta | Media | 2–3 semanas |
-| Astral | Alta | Variable | 2–3 semanas |
-| Microrealismo | Media | Media-Alta | 2–4 semanas |
-| Biomecánico | En aumento | Alta | 3–4 semanas |
-`;
-
-const BLOG_DUELE_MD = `# ¿Duele hacerse un tatuaje? Esto es lo que debes saber según su ubicación
-
-> Hacerse un tatuaje genera una molestia variable según la zona del cuerpo, tu tolerancia personal y la técnica del tatuador. Las zonas con más grasa y músculo (antebrazo, hombro, muslo) duelen poco; las cercanas al hueso (costillas, tobillos, esternón) duelen mucho más. Una sesión típica dura 1–4 horas y la incomodidad es soportable con preparación adecuada.
-
-## Factores que influyen en el dolor
-
-- Tolerancia individual al dolor
-- Tamaño y duración del tatuaje
-- Técnica del tatuador y tipo de aguja
-- Ubicación del tatuaje
-- Hidratación, descanso y alimentación previa
-
-## Dolor por zona del cuerpo
-
-| Zona | Nivel de dolor | Notas |
-|---|---|---|
-| Antebrazo | Bajo | Ideal para principiantes |
-| Hombro | Bajo | Cómodo y de fácil acceso |
-| Espalda baja | Medio | Soportable, molesta al estirarse |
-| Costillas | Alto | Zona sensible cercana al hueso |
-| Tobillos y pies | Alto | Cerca del hueso, poca grasa |
-| Cuello y cara | Muy alto | No recomendado para primer tatuaje |
-
-## Cómo reducir el dolor
-
-- Descansa bien la noche anterior
-- Come ligero antes de la sesión, no llegues en ayunas
-- Evita alcohol y cafeína 24 horas antes
-- Usa ropa cómoda y holgada que dé acceso a la zona
-- Confía en profesionales con buena técnica
-`;
-
-const BLOG_CUIDAR_MD = `# Cómo cuidar tu tatuaje recién hecho — Guía día a día
-
-> La curación de un tatuaje completo dura entre 4 y 6 semanas. Los primeros 4 días se lava 2-3 veces al día con agua templada y jabón neutro y se aplica una capa fina de crema cicatrizante. Entre los días 5-10 aparecen costras que no deben arrancarse. Evita sol, piscina, gimnasio y ropa ajustada hasta cicatrización completa.
-
-## Día 1: tras la sesión
-
-- El tatuador limpia la zona y coloca film transparente o parche.
-- Mantén el film entre 2 y 4 horas.
-- Lava con agua templada y jabón neutro, sin frotar.
-- Seca con toalla limpia a toques suaves.
-- Aplica una capa fina de crema cicatrizante (Bepanthol Tattoo o equivalente).
-
-## Días 2–4: limpieza y crema
-
-- Lava 2–3 veces al día.
-- Aplica crema tras cada lavado.
-- No te rasques aunque pique.
-- Evita sol, piscina, sauna y gimnasio.
-
-## Días 5–10: formación de costras
-
-- Aparecen costras o piel seca: es normal.
-- No las arranques.
-- Sigue aplicando crema, pero sin exceso.
-
-## Días 11–20: últimos cuidados
-
-- Las costras caen solas.
-- El color se ve más claro: se asentará en las semanas siguientes.
-- Hidrata con crema suave varias veces al día.
-
-## Lo que NO debes hacer
-
-- No usar alcohol, agua oxigenada ni vaselina
-- No exponer al sol durante al menos 3 semanas
-- No rascar ni retirar costras
-- No usar ropa ajustada sobre la zona
-`;
+// Las rutas /md/blog y /md/blog/<slug> se sirven dinámicamente desde Sanity
+// (ver app/md/[...slug]/route.ts). El contenido estático aquí cubre solo las
+// páginas comerciales que no cambian a través del CMS.
 
 export const PAGES: PageContent[] = [
   {
@@ -268,30 +155,6 @@ export const PAGES: PageContent[] = [
     title: 'Contacto',
     description: 'Datos de contacto y FAQ del estudio.',
     body: CONTACTO_MD,
-  },
-  {
-    slug: 'blog',
-    title: 'Blog',
-    description: 'Artículos sobre tendencias, dolor y cuidados post-tatuaje.',
-    body: BLOG_INDEX_MD,
-  },
-  {
-    slug: 'blog/tendencias-tatuajes-2025',
-    title: 'Tendencias en tatuajes 2025',
-    description: 'Cinco corrientes que dominan 2025.',
-    body: BLOG_TENDENCIAS_MD,
-  },
-  {
-    slug: 'blog/duele-hacerse-tatuaje',
-    title: '¿Duele hacerse un tatuaje?',
-    description: 'Guía del dolor por zona del cuerpo y consejos prácticos.',
-    body: BLOG_DUELE_MD,
-  },
-  {
-    slug: 'blog/cuidar-tatuaje-recien-hecho',
-    title: 'Cómo cuidar tu tatuaje recién hecho',
-    description: 'Rutina día a día y errores frecuentes.',
-    body: BLOG_CUIDAR_MD,
   },
 ];
 
