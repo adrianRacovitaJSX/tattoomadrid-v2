@@ -41,7 +41,11 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
   };
   
   return (
-    <AnimatePresence mode="wait">
+    // initial={false}: en el primer mount los hijos van directo a su estado
+    // "animate" sin pasar por "initial". Evita que en móvil (o con animaciones
+    // pausadas) el overlay scaleY=1 se quede cubriendo el contenido y el
+    // motion.div interno se quede en opacity 0.
+    <AnimatePresence mode="wait" initial={false}>
       <motion.div
         key={pathname || "page"}
         initial="initial"
@@ -51,12 +55,11 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
       >
         {children}
       </motion.div>
-      
-      {/* Overlay de transición como componente separado para evitar rerenderizaciones */}
+
       <motion.div
         className="fixed inset-0 z-50 bg-zinc-950 pointer-events-none"
         key="overlay"
-        initial={{ scaleY: 1 }}
+        initial={{ scaleY: 0 }}
         animate={{ scaleY: 0 }}
         exit={{ scaleY: 1 }}
         transition={{ duration: 0.5, ease: "easeOut" as const }}

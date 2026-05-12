@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect, useState } from "react";
-import { motion, useScroll, useTransform, useSpring, useInView } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 
 interface ScrollRevealProps {
   children: React.ReactNode;
@@ -21,7 +21,7 @@ interface ScrollRevealProps {
 const ScrollReveal: React.FC<ScrollRevealProps> = ({
   children,
   direction = "up",
-  threshold = 0.1,
+  threshold = 0,
   duration = 0.7,
   delay = 0,
   animate = true,
@@ -33,6 +33,20 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once, amount: threshold });
+  // Failsafe: si en el primer paint el elemento ya está dentro del viewport,
+  // forzamos visible aunque el IntersectionObserver tarde en disparar.
+  // Sin esto, en móvil (especialmente Safari iOS) el initial fire puede
+  // quedarse colgado en isInView=false y el contenido nunca aparece.
+  const [forcedVisible, setForcedVisible] = useState(false);
+  useEffect(() => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const vh =
+      typeof window !== "undefined" ? window.innerHeight : 0;
+    if (rect.top < vh && rect.bottom > 0) {
+      setForcedVisible(true);
+    }
+  }, []);
 
   // Determinar las propiedades iniciales basadas en la dirección
   const getInitialProps = () => {
@@ -117,7 +131,7 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
       ref={ref}
       className={className}
       initial="hidden"
-      animate={animate && isInView ? "visible" : "hidden"}
+      animate={animate && (isInView || forcedVisible) ? "visible" : "hidden"}
       variants={variants}
     >
       {renderChildren()}
