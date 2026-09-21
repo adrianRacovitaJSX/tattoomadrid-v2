@@ -15,6 +15,8 @@ const COMMERCIAL_LASTMOD: Record<string, Date> = {
   '/reservar': SITE_LAST_UPDATED,
   '/contacto': SITE_LAST_UPDATED,
   '/blog': SITE_LAST_UPDATED,
+  '/landing/mini-tattoos': new Date('2026-09-21'),
+  '/landing/mangas': new Date('2026-09-21'),
 };
 
 type SitemapPost = {
@@ -70,6 +72,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${SITE_URL}/blog`,
       lastModified: latestBlogDate,
       changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
+      url: `${SITE_URL}/landing/mini-tattoos`,
+      lastModified: COMMERCIAL_LASTMOD['/landing/mini-tattoos'],
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${SITE_URL}/landing/mangas`,
+      lastModified: COMMERCIAL_LASTMOD['/landing/mangas'],
+      changeFrequency: 'monthly',
       priority: 0.8,
     },
   ];

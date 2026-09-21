@@ -1,4 +1,6 @@
 import HeroSection from "@/components/hero";
+import PromoBanner from "@/components/promo-banner";
+import PromosSection from "@/components/promos";
 import AboutSection from "@/components/about";
 import StatsSection from "@/components/stats";
 import ServicesSection from "@/components/services";
@@ -34,6 +36,8 @@ export default function Home() {
         data={breadcrumbSchema([{ name: "Inicio", path: "/" }])}
       />
       <HeroSection />
+      <PromoBanner />
+      <PromosSection />
       <AboutSection />
       <StatsSection />
       <ServicesSection />
