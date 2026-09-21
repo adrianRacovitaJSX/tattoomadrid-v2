@@ -72,8 +72,8 @@ const CircularText: React.FC<CircularTextProps> = ({
         // Convertir ángulo a radianes
         const angleInRadians = (angle * Math.PI) / 180;
         // Calcular posición
-        const x = radius + radius * Math.sin(angleInRadians);
-        const y = radius - radius * Math.cos(angleInRadians);
+        const x = Math.round((radius + radius * Math.sin(angleInRadians)) * 100) / 100;
+        const y = Math.round((radius - radius * Math.cos(angleInRadians)) * 100) / 100;
         
         return (
           <div 
@@ -84,7 +84,7 @@ const CircularText: React.FC<CircularTextProps> = ({
               top: `${y}px`, 
               fontSize: `${fontSize}px`,
               color: textColor,
-              transform: `translate(-50%, -50%) rotate(${angle + 90}deg)`,
+              transform: `translate(-50%, -50%) rotate(${Math.round((angle + 90) * 100) / 100}deg)`,
             }}
           >
             {char}

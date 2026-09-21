@@ -12,9 +12,12 @@ export default function SiteFrame({
 }) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith('/admin');
+  const isPanel = pathname?.startsWith('/panel');
+  const isLanding = pathname?.startsWith('/landing');
 
-  if (isAdmin) {
-    // Studio embebido: ocupa toda la pantalla, sin chrome del sitio.
+  if (isAdmin || isPanel || isLanding) {
+    // Studio embebido, panel de clientes y landings de captación:
+    // pantalla completa, sin header/footer ni transición de página.
     return <>{children}</>;
   }
 

@@ -14,8 +14,6 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
 
-  if (pathname?.startsWith('/landing') || pathname?.startsWith('/automations')) return null;
-
   // Detectar scroll para cambiar la apariencia del header
   useEffect(() => {
     const handleScroll = () => {
@@ -38,6 +36,10 @@ const Header = () => {
       document.body.style.overflow = '';
     };
   }, [isMobileMenuOpen]);
+
+  // Ocultar en landings y automations. Debe ir DESPUÉS de todos los hooks:
+  // un return antes de los useEffect cambia el nº de hooks al navegar y rompe React.
+  if (pathname?.startsWith('/landing') || pathname?.startsWith('/automations')) return null;
 
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');

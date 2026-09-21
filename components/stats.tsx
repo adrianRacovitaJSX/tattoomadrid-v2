@@ -1,6 +1,12 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
+
+/** Pseudoaleatorio determinista (0-1): igual en servidor y cliente, evita errores de hidratación. */
+const pseudoRandom = (seed: number) => {
+  const x = Math.sin(seed * 9301 + 49297) * 233280;
+  return Number((x - Math.floor(x)).toFixed(4));
+};
 import { motion, useInView, useSpring, useScroll, useTransform } from 'framer-motion';
 import { Sparkles, Users, Calendar, Layout } from 'lucide-react';
 import ScrollReveal from '@/components/ui/scroll-reveal';
@@ -172,9 +178,9 @@ const StatsSection = () => {
               key={i} 
               className="absolute w-1.5 h-1.5 rounded-full bg-[#be8f52]"
               style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                opacity: Math.random() * 0.5 + 0.2
+                top: `${pseudoRandom(i * 3 + 1) * 100}%`,
+                left: `${pseudoRandom(i * 3 + 2) * 100}%`,
+                opacity: Number((pseudoRandom(i * 3 + 3) * 0.5 + 0.2).toFixed(3))
               }}
             />
           ))}
