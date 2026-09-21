@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { getAttributionPayload } from "@/lib/attribution";
 import {
   Star,
   ChevronDown,
@@ -587,6 +588,8 @@ function ConversionForm() {
           eventId,
           fbp,
           sourceUrl: window.location.href,
+          attribution: getAttributionPayload(),
+          fbc: document.cookie.match(/(?:^|;\s*)_fbc=([^;]*)/)?.[1] ?? null,
         }),
       });
 

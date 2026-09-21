@@ -4,6 +4,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import SiteFrame from "@/components/site-frame";
 import CookieConsentBanner from "@/components/cookie-consent";
 import GoogleAnalytics from "@/components/google-analytics";
+import AttributionTracker from "@/components/attribution-tracker";
+import { GA_CONSENT_DEFAULT_SCRIPT } from "@/lib/ga-consent";
 import JsonLd from "@/components/json-ld";
 import WebVitals from "@/components/web-vitals";
 import { SITE_URL, SITE_NAME, DEFAULT_OG_IMAGE } from "@/lib/seo";
@@ -103,6 +105,10 @@ export default function RootLayout({
         <link rel="preconnect" href="https://maps.googleapis.com" />
         <link rel="preconnect" href="https://www.googletagmanager.com" crossOrigin="" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+        <script
+          id="ga-consent-default"
+          dangerouslySetInnerHTML={{ __html: GA_CONSENT_DEFAULT_SCRIPT }}
+        />
         <JsonLd id="ld-organization" data={organizationSchema()} />
         <JsonLd id="ld-website" data={websiteSchema()} />
         {/* Speculation Rules API: prerender de páginas comerciales en hover/scroll
@@ -133,7 +139,6 @@ export default function RootLayout({
           }}
         />
       </head>
-      <GoogleAnalytics />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
@@ -147,6 +152,8 @@ export default function RootLayout({
           <CookieConsentBanner />
         </ThemeProvider>
         <WebVitals />
+        <GoogleAnalytics />
+        <AttributionTracker />
       </body>
     </html>
   );

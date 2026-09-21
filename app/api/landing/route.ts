@@ -3,6 +3,12 @@ import { createHash } from "crypto";
 import { Resend } from "resend";
 import LandingAdminEmail from "@/emails/LandingAdmin";
 import LandingUserEmail from "@/emails/LandingUser";
+import {
+  classifyAttribution,
+  sanitizeAttribution,
+  type AttributionPayload,
+  type Touch,
+} from "@/lib/attribution";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -21,18 +27,26 @@ function normalizePhoneForN8n(phone: string): string {
   return `34${digits}`;
 }
 
-/** Envía lead a n8n; nunca lanza — fallos solo en log */
-async function sendN8nLeadWebhook(payload: {
+type LeadPayload = {
   nombre: string;
   telefono: string;
   email: string;
   descripcion_tatuaje: string;
-}): Promise<void> {
+  fuente: string;
+  canal: string;
+  plataforma: string | null;
+  campana: string | null;
+  atribucion: Record<string, unknown>;
+};
+
+/** Envía lead a n8n; nunca lanza. Devuelve true si n8n lo aceptó. */
+async function sendN8nLeadWebhook(payload: LeadPayload): Promise<boolean> {
   try {
     const res = await fetch(N8N_LEAD_WEBHOOK_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(10_000),
     });
     if (!res.ok) {
       const text = await res.text().catch(() => "");
@@ -42,10 +56,105 @@ async function sendN8nLeadWebhook(payload: {
         res.statusText,
         text.slice(0, 500)
       );
+      return false;
     }
+    return true;
   } catch (err) {
     console.error("n8n webhook fetch failed:", err);
+    return false;
   }
+}
+
+/**
+ * Respaldo: si n8n no responde, el lead se guarda directamente en Supabase
+ * para que no se pierda (sin WhatsApp automático; el email al estudio sí sale).
+ * Si las columnas de atribución aún no existen, reintenta sin ellas.
+ */
+async function insertLeadFallback(payload: LeadPayload): Promise<void> {
+  const url = process.env.SUPABASE_URL?.replace(/\/$/, "");
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) {
+    console.error("Lead fallback: faltan SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY", payload.telefono);
+    return;
+  }
+  const base = {
+    nombre: payload.nombre,
+    telefono: payload.telefono,
+    email: payload.email,
+    descripcion_tatuaje: payload.descripcion_tatuaje,
+    estado: "nuevo",
+    fecha_entrada: new Date().toISOString(),
+    num_seguimientos: "0",
+    notas_agente: "Guardado por la web: n8n no respondió, sin WhatsApp automático.",
+  };
+  const withAttribution = {
+    ...base,
+    fuente: payload.fuente,
+    canal: payload.canal,
+    plataforma: payload.plataforma,
+    campana: payload.campana,
+    atribucion: payload.atribucion,
+  };
+  const post = (row: Record<string, unknown>) =>
+    fetch(`${url}/rest/v1/leads`, {
+      method: "POST",
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify(row),
+    });
+  try {
+    let res = await post(withAttribution);
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      console.warn("Lead fallback con atribución falló, reintento sin ella:", res.status, text.slice(0, 300));
+      res = await post(base);
+    }
+    if (!res.ok) {
+      console.error("Lead fallback error:", res.status, (await res.text().catch(() => "")).slice(0, 500));
+    } else {
+      console.warn("Lead guardado por respaldo (n8n caído):", payload.telefono);
+    }
+  } catch (err) {
+    console.error("Lead fallback fetch failed:", err);
+  }
+}
+
+/** n8n primero; si falla, respaldo directo en Supabase. Nunca lanza. */
+async function saveLead(payload: LeadPayload): Promise<void> {
+  const ok = await sendN8nLeadWebhook(payload);
+  if (!ok) await insertLeadFallback(payload);
+}
+
+/** Respaldo si el navegador no pudo guardar la atribución: parámetros de la URL de envío. */
+function touchFromUrl(sourceUrl: string, referer: string | null): Touch | null {
+  try {
+    const u = new URL(sourceUrl);
+    const t: Touch = { landing: u.pathname };
+    for (const k of [
+      "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "utm_id",
+      "fbclid", "gclid", "gbraid", "wbraid", "ttclid", "msclkid",
+    ] as const) {
+      const v = u.searchParams.get(k);
+      if (v) t[k] = v.slice(0, 200);
+    }
+    if (referer) {
+      const r = new URL(referer);
+      if (r.hostname !== u.hostname) t.referrer = r.hostname.toLowerCase();
+    }
+    return t;
+  } catch {
+    return null;
+  }
+}
+
+/** Cookie _fbc de Meta a partir del fbclid (mejora el emparejamiento en CAPI). */
+function buildFbc(fbclid: string | undefined, ts: number | undefined): string | null {
+  if (!fbclid) return null;
+  return `fb.1.${ts ?? Date.now()}.${fbclid}`;
 }
 
 function sha256(value: string): string {
@@ -60,6 +169,7 @@ async function sendMetaConversionEvent({
   phone,
   firstName,
   fbp,
+  fbc,
   sourceUrl,
   clientIp,
   userAgent,
@@ -69,6 +179,7 @@ async function sendMetaConversionEvent({
   phone: string;
   firstName: string;
   fbp: string | null;
+  fbc: string | null;
   sourceUrl: string;
   clientIp: string;
   userAgent: string;
@@ -96,6 +207,10 @@ async function sendMetaConversionEvent({
 
   if (fbp) {
     userData.fbp = fbp;
+  }
+
+  if (fbc) {
+    userData.fbc = fbc;
   }
 
   const payload: Record<string, unknown> = {
@@ -139,7 +254,7 @@ async function sendMetaConversionEvent({
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, phone, email, project, eventId, fbp, sourceUrl } = body;
+    const { name, phone, email, project, eventId, fbp, sourceUrl, fbc: fbcCookie } = body;
 
     if (!name || !phone || !project) {
       return NextResponse.json(
@@ -155,6 +270,18 @@ export async function POST(req: NextRequest) {
     const userAgent = req.headers.get("user-agent") || "";
 
     const telefonoN8n = normalizePhoneForN8n(String(phone));
+
+    // ── Atribución (fuente del lead) ──
+    const attribution: AttributionPayload = sanitizeAttribution(body.attribution);
+    if (!attribution.last && !attribution.first) {
+      const fallback = touchFromUrl(String(sourceUrl || ""), req.headers.get("referer"));
+      if (fallback) attribution.last = fallback;
+    }
+    const clasif = classifyAttribution(attribution, userAgent);
+    const clickTouch = [attribution.last, attribution.first].find((t) => t?.fbclid);
+    const fbc =
+      (typeof fbcCookie === "string" && fbcCookie) ||
+      buildFbc(clickTouch?.fbclid, clickTouch?.ts);
 
     const emailStr = String(email || "").trim();
 
@@ -177,15 +304,21 @@ export async function POST(req: NextRequest) {
         phone,
         firstName: name.split(" ")[0],
         fbp: fbp || null,
+        fbc,
         sourceUrl: sourceUrl || "https://tattoomadrid.com/landing",
         clientIp,
         userAgent,
       }),
-      sendN8nLeadWebhook({
+      saveLead({
         nombre: String(name).trim(),
         telefono: telefonoN8n,
         email: emailStr,
         descripcion_tatuaje: String(project).trim(),
+        fuente: clasif.fuente,
+        canal: clasif.canal,
+        plataforma: clasif.plataforma,
+        campana: clasif.campana,
+        atribucion: { ...attribution, inferido: clasif.inferido },
       }),
     ];
 
