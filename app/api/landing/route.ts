@@ -3,6 +3,7 @@ import { createHash } from "crypto";
 import { Resend } from "resend";
 import LandingAdminEmail from "@/emails/LandingAdmin";
 import LandingUserEmail from "@/emails/LandingUser";
+import { registrarLead } from "@/lib/leads/save";
 import {
   classifyAttribution,
   sanitizeAttribution,
@@ -17,117 +18,13 @@ const META_TOKEN = process.env.META_CONVERSIONS_API_TOKEN;
 const META_API_VERSION = "v21.0";
 const META_TEST_EVENT_CODE = process.env.META_TEST_EVENT_CODE || null;
 
-const N8N_LEAD_WEBHOOK_URL =
-  "https://sns-automatization.pikapod.net/webhook/nuevo-lead";
-
 /** Teléfono solo dígitos, prefijo 34 sin + (ej. 612 345 678 → 34612345678) */
-function normalizePhoneForN8n(phone: string): string {
+function normalizePhone(phone: string): string {
   const digits = phone.replace(/\D/g, "").replace(/^0+/, "");
   if (digits.startsWith("34")) return digits;
   return `34${digits}`;
 }
 
-type LeadPayload = {
-  nombre: string;
-  telefono: string;
-  email: string;
-  descripcion_tatuaje: string;
-  fuente: string;
-  canal: string;
-  plataforma: string | null;
-  campana: string | null;
-  atribucion: Record<string, unknown>;
-};
-
-/** Envía lead a n8n; nunca lanza. Devuelve true si n8n lo aceptó. */
-async function sendN8nLeadWebhook(payload: LeadPayload): Promise<boolean> {
-  try {
-    const res = await fetch(N8N_LEAD_WEBHOOK_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-      signal: AbortSignal.timeout(10_000),
-    });
-    if (!res.ok) {
-      const text = await res.text().catch(() => "");
-      console.error(
-        "n8n webhook error:",
-        res.status,
-        res.statusText,
-        text.slice(0, 500)
-      );
-      return false;
-    }
-    return true;
-  } catch (err) {
-    console.error("n8n webhook fetch failed:", err);
-    return false;
-  }
-}
-
-/**
- * Respaldo: si n8n no responde, el lead se guarda directamente en Supabase
- * para que no se pierda (sin WhatsApp automático; el email al estudio sí sale).
- * Si las columnas de atribución aún no existen, reintenta sin ellas.
- */
-async function insertLeadFallback(payload: LeadPayload): Promise<void> {
-  const url = process.env.SUPABASE_URL?.replace(/\/$/, "");
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) {
-    console.error("Lead fallback: faltan SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY", payload.telefono);
-    return;
-  }
-  const base = {
-    nombre: payload.nombre,
-    telefono: payload.telefono,
-    email: payload.email,
-    descripcion_tatuaje: payload.descripcion_tatuaje,
-    estado: "nuevo",
-    fecha_entrada: new Date().toISOString(),
-    num_seguimientos: "0",
-    notas_agente: "Guardado por la web: n8n no respondió, sin WhatsApp automático.",
-  };
-  const withAttribution = {
-    ...base,
-    fuente: payload.fuente,
-    canal: payload.canal,
-    plataforma: payload.plataforma,
-    campana: payload.campana,
-    atribucion: payload.atribucion,
-  };
-  const post = (row: Record<string, unknown>) =>
-    fetch(`${url}/rest/v1/leads`, {
-      method: "POST",
-      headers: {
-        apikey: key,
-        Authorization: `Bearer ${key}`,
-        "Content-Type": "application/json",
-        Prefer: "return=minimal",
-      },
-      body: JSON.stringify(row),
-    });
-  try {
-    let res = await post(withAttribution);
-    if (!res.ok) {
-      const text = await res.text().catch(() => "");
-      console.warn("Lead fallback con atribución falló, reintento sin ella:", res.status, text.slice(0, 300));
-      res = await post(base);
-    }
-    if (!res.ok) {
-      console.error("Lead fallback error:", res.status, (await res.text().catch(() => "")).slice(0, 500));
-    } else {
-      console.warn("Lead guardado por respaldo (n8n caído):", payload.telefono);
-    }
-  } catch (err) {
-    console.error("Lead fallback fetch failed:", err);
-  }
-}
-
-/** n8n primero; si falla, respaldo directo en Supabase. Nunca lanza. */
-async function saveLead(payload: LeadPayload): Promise<void> {
-  const ok = await sendN8nLeadWebhook(payload);
-  if (!ok) await insertLeadFallback(payload);
-}
 
 /** Respaldo si el navegador no pudo guardar la atribución: parámetros de la URL de envío. */
 function touchFromUrl(sourceUrl: string, referer: string | null): Touch | null {
@@ -269,7 +166,7 @@ export async function POST(req: NextRequest) {
       "0.0.0.0";
     const userAgent = req.headers.get("user-agent") || "";
 
-    const telefonoN8n = normalizePhoneForN8n(String(phone));
+    const telefono = normalizePhone(String(phone));
 
     // ── Atribución (fuente del lead) ──
     const attribution: AttributionPayload = sanitizeAttribution(body.attribution);
@@ -285,7 +182,7 @@ export async function POST(req: NextRequest) {
 
     const emailStr = String(email || "").trim();
 
-    // Siempre: admin email, CAPI, n8n
+    // Siempre: email al estudio, evento de Meta y registro del lead en Supabase
     const promises: Promise<unknown>[] = [
       resend.emails.send({
         from: "Saints & Sinners Tattoo Madrid <notificaciones@tattoomadrid.com>",
@@ -309,9 +206,9 @@ export async function POST(req: NextRequest) {
         clientIp,
         userAgent,
       }),
-      saveLead({
+      registrarLead({
         nombre: String(name).trim(),
-        telefono: telefonoN8n,
+        telefono,
         email: emailStr,
         descripcion_tatuaje: String(project).trim(),
         fuente: clasif.fuente,
