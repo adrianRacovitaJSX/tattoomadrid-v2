@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { Calendar, Sparkles, ArrowRight } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
+import { WhatsAppLink } from '@/components/site/cta-link';
 
 type Props = {
   // Sección concreta de /servicios a la que enlazar mediante ancla.
@@ -8,54 +9,37 @@ type Props = {
   servicesLabel?: string;
 };
 
+/** Cierre de cada post: lleva el tráfico informativo a ver trabajos o a pedir presupuesto. */
 export default function RelatedCta({
   servicesAnchor = '',
-  servicesLabel = 'Conoce todos nuestros servicios',
+  servicesLabel = 'Mira nuestros trabajos',
 }: Props) {
-  const servicesHref = servicesAnchor ? `/servicios#${servicesAnchor}` : '/servicios';
+  const href = servicesAnchor === 'tatuajes' || !servicesAnchor ? '/tatuajes' : `/servicios#${servicesAnchor}`;
 
   return (
-    <aside
-      aria-label="Próximo paso"
-      className="my-12 grid gap-4 md:grid-cols-2"
-    >
+    <aside aria-label="Próximo paso" className="not-prose my-12 grid gap-4 md:grid-cols-2">
       <Link
-        href={servicesHref}
-        className="group flex items-start gap-4 rounded-xl border border-[#be8f52]/30 bg-white p-5 shadow-sm transition-all hover:border-[#be8f52] hover:shadow-md dark:bg-zinc-900"
+        href={href}
+        className="group flex flex-col justify-between gap-4 rounded-[4px] border border-line bg-surface-1 p-6 transition-colors hover:border-gold/60"
       >
-        <Sparkles size={22} className="mt-1 shrink-0 text-[#be8f52]" />
         <div>
-          <h3 className="font-semibold text-gray-900 dark:text-white">
-            {servicesLabel}
-          </h3>
-          <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
-            Tatuajes personalizados, piercing, micropigmentación y eliminación láser.
-          </p>
-          <span className="mt-2 inline-flex items-center text-sm font-medium text-[#be8f52]">
-            Ver servicios
-            <ArrowRight size={14} className="ml-1 transition-transform group-hover:translate-x-1" />
-          </span>
+          <p className="eyebrow mb-2">Portfolio</p>
+          <h3 className="font-display text-2xl text-bone">{servicesLabel}</h3>
+          <p className="mt-2 text-sm text-ash">Tatuajes reales hechos en nuestro estudio de Madrid, filtrados por estilo.</p>
         </div>
+        <span className="inline-flex items-center gap-1 text-sm font-medium text-gold">
+          Ver trabajos <ArrowUpRight aria-hidden className="size-4" />
+        </span>
       </Link>
 
-      <Link
-        href="/reservar"
-        className="group flex items-start gap-4 rounded-xl border border-[#be8f52]/30 bg-[#be8f52]/5 p-5 shadow-sm transition-all hover:border-[#be8f52] hover:shadow-md dark:bg-[#be8f52]/10"
-      >
-        <Calendar size={22} className="mt-1 shrink-0 text-[#be8f52]" />
+      <div className="flex flex-col justify-between gap-4 rounded-[4px] border border-gold/40 bg-gold/5 p-6">
         <div>
-          <h3 className="font-semibold text-gray-900 dark:text-white">
-            Reserva tu cita
-          </h3>
-          <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
-            Completa el formulario y te confirmamos disponibilidad en menos de 24 h.
-          </p>
-          <span className="mt-2 inline-flex items-center text-sm font-medium text-[#be8f52]">
-            Ir al formulario
-            <ArrowRight size={14} className="ml-1 transition-transform group-hover:translate-x-1" />
-          </span>
+          <p className="eyebrow mb-2">Presupuesto</p>
+          <h3 className="font-display text-2xl text-bone">¿Tienes una idea?</h3>
+          <p className="mt-2 text-sm text-ash">Mándanos la idea y una referencia. Te respondemos con propuesta y precio sin compromiso.</p>
         </div>
-      </Link>
+        <WhatsAppLink placement="blog-cta" message="Hola, vengo del blog y quiero pedir presupuesto para un tatuaje." className="self-start" />
+      </div>
     </aside>
   );
 }

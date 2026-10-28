@@ -7,9 +7,9 @@ import PriceTable from '@/components/site/price-table';
 import { OffersGrid } from '@/components/site/sections';
 
 export const metadata = buildMetadata({
-  title: 'Precios de Tatuajes en Madrid — Cuánto Cuesta un Tatuaje',
+  title: 'Precio de un Tatuaje en Madrid',
   description:
-    'Cuánto cuesta un tatuaje en Madrid: en Saints & Sinners desde 70 €. Precios de piercing, micropigmentación y láser, señal, ofertas y qué influye en el presupuesto.',
+    'Cuánto cuesta un tatuaje en Madrid: desde 70 € en Saints & Sinners. Precios de piercing, micropigmentación y láser, señal y qué influye en el presupuesto.',
   path: '/precios',
   ogTitle: 'Precios de tatuajes en Madrid',
   ogKicker: 'Tatuajes desde 70 € · Presupuesto cerrado',

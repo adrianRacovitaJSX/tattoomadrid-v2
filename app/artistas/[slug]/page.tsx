@@ -25,9 +25,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const artist = getArtist(slug);
   if (!artist) return {};
-  const styles = artist.styles.map((s) => STYLES.find((st) => st.slug === s)?.name.toLowerCase()).filter(Boolean);
   return buildMetadata({
-    title: `${artist.name}, tatuador en Madrid${styles.length ? ` — ${styles.join(' y ')}` : ''}`,
+    title: `${artist.name}, tatuador en Madrid`,
     description: artistIsReady(artist)
       ? `${artist.tagline} Mira el portfolio de ${artist.name} en Saints & Sinners Madrid y reserva por WhatsApp.`
       : `${artist.name} tatúa en Saints & Sinners, estudio de tatuajes en Madrid. Escríbenos para ver sus trabajos y reservar.`,

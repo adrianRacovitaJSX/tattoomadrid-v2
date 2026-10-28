@@ -9,9 +9,9 @@ import { Breadcrumbs, Container, FaqList, Section, SectionHeader } from "@/compo
 import { WhatsAppLink } from "@/components/site/cta-link";
 
 export const metadata = buildMetadata({
-  title: "Reservar Cita — Estudio de Tatuajes en Madrid",
+  title: "Pedir Cita de Tatuaje en Madrid",
   description:
-    "Pide cita en Saints & Sinners Tattoo Madrid: cuéntanos tu idea por WhatsApp o con el formulario y te respondemos con propuesta, precio y fechas. Tatuaje y piercing.",
+    "Pide cita en Saints & Sinners Madrid: cuéntanos tu idea por WhatsApp o con el formulario y te respondemos con propuesta, precio y fechas disponibles.",
   path: "/reservar",
   ogTitle: "Reserva tu cita en Saints & Sinners",
   ogKicker: "Propuesta y presupuesto sin compromiso",

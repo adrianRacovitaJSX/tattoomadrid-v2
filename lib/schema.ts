@@ -154,14 +154,6 @@ export function websiteSchema() {
     name: SITE_NAME,
     inLanguage: 'es-ES',
     publisher: { '@id': BUSINESS_ID },
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: `${SITE_URL}/blog?q={search_term_string}`,
-      },
-      'query-input': 'required name=search_term_string',
-    },
   };
 }
 

@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default: `${SITE_NAME} | Estudio de Tatuajes Profesional en Madrid`,
-    template: `%s | ${SITE_NAME}`,
+    template: '%s | Saints & Sinners',
   },
   description:
     "Estudio de tatuajes profesional en Madrid desde 2008. Tatuajes personalizados, piercings y micropigmentación con artistas especializados. Reserva tu cita en Saints & Sinners.",
@@ -131,12 +131,6 @@ export default function RootLayout({
                       "/precios",
                     ],
                   },
-                  eagerness: "moderate",
-                },
-              ],
-              prefetch: [
-                {
-                  where: { href_matches: "/blog/*" },
                   eagerness: "moderate",
                 },
               ],

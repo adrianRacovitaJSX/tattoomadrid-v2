@@ -5,7 +5,7 @@ import { Breadcrumbs, Container, CtaBand, Section } from '@/components/site/bloc
 import { OffersGrid } from '@/components/site/sections';
 
 export const metadata = buildMetadata({
-  title: 'Ofertas de Tatuajes en Madrid — Mini Tattoos y Mangas',
+  title: 'Ofertas de Tatuajes en Madrid',
   description:
     'Ofertas de tatuajes en Madrid: 3 mini tattoos por 100 € y media manga por 850 € con precio cerrado y diseño incluido. Reserva por WhatsApp en Saints & Sinners.',
   path: '/ofertas',

@@ -14,7 +14,6 @@ export const NAV_LINKS = [
   { name: 'Piercing', href: '/piercing-madrid' },
   { name: 'Precios', href: '/precios' },
   { name: 'Ofertas', href: '/ofertas' },
-  { name: 'Blog', href: '/blog' },
 ];
 
 export default function Header() {

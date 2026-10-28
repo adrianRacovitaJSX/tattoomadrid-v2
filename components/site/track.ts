@@ -8,7 +8,8 @@ export type ConversionEvent =
   | 'directions_click'
   | 'portfolio_filter'
   | 'portfolio_open'
-  | 'booking_cta_click';
+  | 'booking_cta_click'
+  | 'generate_lead';
 
 export function track(event: ConversionEvent, params: Record<string, string> = {}) {
   if (typeof window === 'undefined' || typeof window.gtag !== 'function') return;

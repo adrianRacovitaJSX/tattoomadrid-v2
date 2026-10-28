@@ -8,7 +8,7 @@ import { LocationSection, TrustStrip } from '@/components/site/sections';
 const PIERCING = SERVICE_PRICES.find((s) => s.id === 'piercing')!;
 
 export const metadata = buildMetadata({
-  title: 'Piercing en Madrid — Estudio en Ciudad Lineal',
+  title: 'Piercing en Madrid, Ciudad Lineal',
   description:
     'Piercing en Madrid desde 30 €: orejas, nariz, ombligo y más con joyería de titanio y material de un solo uso. Estudio en Ciudad Lineal. Pide cita por WhatsApp.',
   path: '/piercing-madrid',

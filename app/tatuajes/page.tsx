@@ -5,7 +5,7 @@ import PortfolioGrid from '@/components/site/portfolio-grid';
 import { StyleCards } from '@/components/site/sections';
 
 export const metadata = buildMetadata({
-  title: 'Tatuajes en Madrid — Trabajos Reales del Estudio',
+  title: 'Tatuajes en Madrid: Trabajos Reales',
   description:
     'Galería de tatuajes hechos en Saints & Sinners, Madrid: mangas realistas, black and grey, japonés y fine line. Filtra por estilo y pide presupuesto por WhatsApp.',
   path: '/tatuajes',

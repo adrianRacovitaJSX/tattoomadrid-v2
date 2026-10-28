@@ -12,9 +12,9 @@ import PriceTable from '@/components/site/price-table';
 import { TrustStrip } from '@/components/site/sections';
 
 export const metadata = buildMetadata({
-  title: 'Servicios de Tatuaje, Piercing y Micropigmentación en Madrid',
+  title: 'Tatuaje, Piercing y Micropigmentación',
   description:
-    'Servicios de Saints & Sinners en Madrid: tatuajes a medida desde 70 €, piercing desde 30 €, micropigmentación de cejas y eliminación láser. Precios y cita por WhatsApp.',
+    'Saints & Sinners Madrid: tatuajes a medida desde 70 €, piercing desde 30 €, micropigmentación de cejas y eliminación láser. Precios y cita por WhatsApp.',
   path: '/servicios',
   ogTitle: 'Servicios del estudio',
   ogKicker: 'Tatuaje · Piercing · Micropigmentación · Láser',

@@ -1,518 +1,286 @@
 "use client";
 
-import React, { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { 
-  User, Mail, Phone, Calendar, MapPin, 
-  Image as ImageIcon, Send, CheckCircle, AlertCircle,
-  Clock, Info
-} from 'lucide-react';
-import Link from 'next/link';
+import { useRef, useState } from "react";
+import Link from "next/link";
+import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { ARTISTS } from "@/lib/artists";
+import { getAttributionPayload } from "@/lib/attribution";
+import { WhatsAppLink } from "@/components/site/cta-link";
+import { track } from "@/components/site/track";
 
-const artistas = [
-  { id: 'gamboa', nombre: 'Gamboa The Goat', especialidad: 'Realismo & Chicano' },
-  { id: 'edward', nombre: 'Edward Ortiz', especialidad: 'Neotradicional' },
-  { id: 'airon', nombre: 'Airon Broncano', especialidad: 'Realismo' },
-  { id: 'yury', nombre: 'Yury Marino', especialidad: 'Realismo Fine Line & Lettering' }
-];
+/**
+ * Formulario de cita. Envía a /api/landing, el mismo flujo que las landings:
+ * registra el lead en Supabase con su atribución, avisa al estudio por email
+ * y manda el evento de conversión a Meta. Las referencias en imagen se piden
+ * por WhatsApp tras el envío (la API no guarda archivos).
+ */
 
-const horarios = [
-  'Mañana (11:00 - 14:00)',
-  'Tarde (15:00 - 20:00)',
-  'Indiferente'
-];
+const SIZES = ["Pequeño (hasta 10 cm)", "Mediano (10–20 cm)", "Grande (más de 20 cm)", "Manga, pierna o espalda"];
 
-const ReservaForm = () => {
-  const [formData, setFormData] = useState({
-    nombre: '',
-    email: '',
-    telefono: '',
-    artista: '',
-    zonaTatuaje: '',
-    dimensiones: '',
-    horario: '',
-    mensaje: '',
-    aceptaPrivacidad: false,
-    aceptaMarketing: false
-  });
+type Field = "name" | "phone" | "email" | "idea" | "privacy";
+type Errors = Partial<Record<Field, string>>;
 
-  const [imagenes, setImagenes] = useState<File[]>([]);
-  const [imagenesPreview, setImagenesPreview] = useState<string[]>([]);
-  const [enviando, setEnviando] = useState(false);
-  const [estadoForm, setEstadoForm] = useState<null | 'success' | 'error'>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+function validate(data: FormData): Errors {
+  const errors: Errors = {};
+  const name = String(data.get("name") || "").trim();
+  const phone = String(data.get("phone") || "").replace(/\D/g, "");
+  const email = String(data.get("email") || "").trim();
+  const idea = String(data.get("idea") || "").trim();
 
-  // Manejar cambios en los campos del formulario
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target as HTMLInputElement;
-    
-    setFormData({
-      ...formData,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
-    });
+  if (name.length < 2) errors.name = "Escribe tu nombre.";
+  if (phone.length < 9 || phone.length > 13) errors.phone = "Escribe un teléfono válido, por ejemplo 612 345 678.";
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = "Revisa el email o déjalo vacío.";
+  if (idea.length < 5) errors.idea = "Cuéntanos en una frase qué te quieres tatuar.";
+  if (!data.get("privacy")) errors.privacy = "Necesitamos que aceptes la política de privacidad para contactarte.";
+  return errors;
+}
+
+const inputCls = (invalid: boolean) =>
+  cn(
+    "block h-12 w-full rounded-[4px] border bg-ink px-4 text-base text-bone placeholder:text-ash/60 transition-colors focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30",
+    invalid ? "border-destructive" : "border-line hover:border-bone/30"
+  );
+
+const labelCls = "mb-2 block text-sm font-medium text-bone";
+
+function FieldError({ id, message }: { id: string; message?: string }) {
+  if (!message) return null;
+  return (
+    <p id={id} className="mt-2 flex items-center gap-1.5 text-sm text-destructive">
+      <AlertCircle aria-hidden className="size-4 shrink-0" /> {message}
+    </p>
+  );
+}
+
+export default function ReservaForm() {
+  const formRef = useRef<HTMLFormElement>(null);
+  const [errors, setErrors] = useState<Errors>({});
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [firstName, setFirstName] = useState("");
+
+  // Valida un campo al salir de él, solo si ya había error o tiene contenido.
+  const onBlur = (field: Field) => {
+    if (!formRef.current) return;
+    const all = validate(new FormData(formRef.current));
+    setErrors((prev) => ({ ...prev, [field]: all[field] }));
   };
 
-  // Manejar la selección de imágenes
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const filesArray = Array.from(e.target.files);
-      
-      // Limitar a 4 imágenes como máximo
-      const selectedFiles = filesArray.slice(0, 4);
-      
-      // Actualizar el estado de las imágenes
-      setImagenes(prevImages => {
-        const newImages = [...prevImages, ...selectedFiles];
-        return newImages.slice(0, 4); // Mantener máximo 4 imágenes
-      });
-      
-      // Crear URLs para las previsualizaciones
-      const imageURLs = selectedFiles.map(file => URL.createObjectURL(file));
-      
-      setImagenesPreview(prevPreviews => {
-        const newPreviews = [...prevPreviews, ...imageURLs];
-        return newPreviews.slice(0, 4); // Mantener máximo 4 previsualizaciones
-      });
-    }
-  };
-
-  // Eliminar una imagen
-  const removeImage = (index: number) => {
-    setImagenes(prevImages => prevImages.filter((_, i) => i !== index));
-    
-    // Revocar la URL para liberar memoria
-    URL.revokeObjectURL(imagenesPreview[index]);
-    setImagenesPreview(prevPreviews => prevPreviews.filter((_, i) => i !== index));
-  };
-
-  // Manejar el envío del formulario
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setEnviando(true);
-    
-    try {
-      // Aquí iría la lógica para enviar el formulario al backend
-      // Por ejemplo, creando un FormData con todos los campos e imágenes
-      const formDataToSend = new FormData();
-      
-      // Añadir campos de texto
-      Object.entries(formData).forEach(([key, value]) => {
-        formDataToSend.append(key, value.toString());
-      });
-      
-      // Añadir imágenes
-      imagenes.forEach((image, index) => {
-        formDataToSend.append(`imagen${index + 1}`, image);
-      });
-      
-      // Simulando una petición de envío que tarda 2 segundos
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Simular una respuesta exitosa
-      setEstadoForm('success');
-      
-      // Reiniciar el formulario después de un envío exitoso
-      setFormData({
-        nombre: '',
-        email: '',
-        telefono: '',
-        artista: '',
-        zonaTatuaje: '',
-        dimensiones: '',
-        horario: '',
-        mensaje: '',
-        aceptaPrivacidad: false,
-        aceptaMarketing: false
-      });
-      
-      // Limpiar imágenes
-      imagenesPreview.forEach(url => URL.revokeObjectURL(url));
-      setImagenes([]);
-      setImagenesPreview([]);
-      
-    } catch (error) {
-      console.error('Error al enviar el formulario:', error);
-      setEstadoForm('error');
-    } finally {
-      setEnviando(false);
-      
-      // Resetear el estado del formulario después de 5 segundos
-      setTimeout(() => {
-        setEstadoForm(null);
-      }, 5000);
-    }
-  };
+    const form = e.currentTarget;
+    const data = new FormData(form);
+    if (data.get("website")) return; // honeypot
 
-  // Variantes para animaciones
-  const containerVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { 
-        duration: 0.6,
-        ease: "easeOut" as const
-      }
+    const found = validate(data);
+    setErrors(found);
+    const firstInvalid = (Object.keys(found) as Field[])[0];
+    if (firstInvalid) {
+      form.querySelector<HTMLElement>(`[name="${firstInvalid}"]`)?.focus();
+      return;
     }
-  };
+
+    const artistSlug = String(data.get("artist") || "");
+    const artist = ARTISTS.find((a) => a.slug === artistSlug)?.name ?? "Sin preferencia";
+    const project = [
+      "RESERVA WEB",
+      `Idea: ${String(data.get("idea")).trim()}`,
+      data.get("placement") && `Zona: ${String(data.get("placement")).trim()}`,
+      data.get("size") && `Tamaño: ${data.get("size")}`,
+      `Artista: ${artist}`,
+    ]
+      .filter(Boolean)
+      .join(" · ");
+
+    setStatus("loading");
+    try {
+      const res = await fetch("/api/landing", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: String(data.get("name")).trim(),
+          phone: String(data.get("phone")).trim(),
+          email: String(data.get("email") || "").trim(),
+          project,
+          eventId: `${Date.now()}.${Math.random().toString(36).slice(2, 11)}`,
+          sourceUrl: window.location.href,
+          attribution: getAttributionPayload(),
+        }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setFirstName(String(data.get("name")).trim().split(" ")[0]);
+      setStatus("success");
+      track("generate_lead", { form: "reservar", artist: artistSlug || "sin_preferencia" });
+      form.reset();
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  if (status === "success") {
+    return (
+      <div role="status" className="rounded-[4px] border border-line bg-surface-1 p-6 sm:p-8">
+        <CheckCircle2 aria-hidden className="size-8 text-gold" />
+        <h2 className="font-display mt-4 text-3xl text-bone">Recibido{firstName ? `, ${firstName}` : ""}</h2>
+        <p className="mt-3 leading-relaxed text-ash">
+          Te escribimos por WhatsApp con propuesta y fechas. Si tienes fotos de referencia, mándalas ya por WhatsApp y el artista las verá antes.
+        </p>
+        <div className="mt-6">
+          <WhatsAppLink placement="reservar-exito" message="Hola, acabo de enviar el formulario de cita. Os mando mis referencias:">
+            Enviar referencias por WhatsApp
+          </WhatsAppLink>
+        </div>
+      </div>
+    );
+  }
+
+  const errorProps = (field: Field) =>
+    errors[field] ? { "aria-invalid": true as const, "aria-describedby": `${field}-error` } : {};
 
   return (
-    <motion.div 
-      className="bg-white dark:bg-zinc-800 rounded-2xl shadow-xl overflow-hidden border border-zinc-200 dark:border-zinc-700"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      {/* Estado del formulario (éxito/error) */}
-      {estadoForm && (
-        <div className={`p-5 ${
-          estadoForm === 'success' 
-            ? 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-400 border-b border-green-200 dark:border-green-800/30' 
-            : 'bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-400 border-b border-red-200 dark:border-red-800/30'
-        }`}>
-          <div className="flex items-start">
-            {estadoForm === 'success' ? (
-              <CheckCircle className="h-5 w-5 mr-3 mt-0.5 flex-shrink-0" />
-            ) : (
-              <AlertCircle className="h-5 w-5 mr-3 mt-0.5 flex-shrink-0" />
-            )}
-            <div>
-              <h3 className="font-semibold">
-                {estadoForm === 'success' ? '¡Solicitud enviada!' : 'Error al enviar'}
-              </h3>
-              <p className="text-sm mt-1">
-                {estadoForm === 'success' 
-                  ? 'Hemos recibido tu solicitud de cita. Te contactaremos lo antes posible para confirmar los detalles.' 
-                  : 'Ha ocurrido un error al enviar tu solicitud. Por favor, inténtalo de nuevo o contáctanos directamente por teléfono.'}
-              </p>
-            </div>
+    <form ref={formRef} onSubmit={handleSubmit} noValidate className="rounded-[4px] border border-line bg-surface-1 p-6 sm:p-8">
+      {/* Honeypot: invisible para personas, los bots lo rellenan */}
+      <div aria-hidden className="absolute -left-[9999px]">
+        <label>
+          No rellenar
+          <input type="text" name="website" tabIndex={-1} autoComplete="off" />
+        </label>
+      </div>
+
+      {status === "error" && (
+        <div role="alert" className="mb-6 rounded-[4px] border border-destructive/40 bg-destructive/10 p-4 text-sm text-bone">
+          <p className="font-medium">No hemos podido enviar el formulario.</p>
+          <p className="mt-1 text-ash">Vuelve a intentarlo o escríbenos por WhatsApp y te atendemos al momento.</p>
+          <div className="mt-3">
+            <WhatsAppLink placement="reservar-error">Escribir por WhatsApp</WhatsAppLink>
           </div>
         </div>
       )}
 
-      {/* Formulario */}
-      <form onSubmit={handleSubmit} className="p-6 sm:p-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Columna izquierda */}
-          <div className="space-y-5">
-            <h3 className="text-lg font-semibold text-zinc-900 dark:text-white flex items-center">
-              <User size={18} className="mr-2 text-[#be8f52]" /> 
-              Datos personales
-            </h3>
-            
-            {/* Nombre */}
-            <div>
-              <label htmlFor="nombre" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                Nombre completo
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  id="nombre"
-                  name="nombre"
-                  value={formData.nombre}
-                  onChange={handleInputChange}
-                  required
-                  className="block w-full px-4 py-3 border border-zinc-300 dark:border-zinc-600 rounded-lg shadow-sm focus:ring-2 focus:ring-[#be8f52]/50 focus:border-[#be8f52] dark:bg-zinc-700 dark:text-white text-sm"
-                  placeholder="Tu nombre"
-                />
-              </div>
-            </div>
-
-            {/* Email */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                Email
-              </label>
-              <div className="relative">
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                  className="block w-full px-4 py-3 border border-zinc-300 dark:border-zinc-600 rounded-lg shadow-sm focus:ring-2 focus:ring-[#be8f52]/50 focus:border-[#be8f52] dark:bg-zinc-700 dark:text-white text-sm"
-                  placeholder="Tu email"
-                />
-              </div>
-            </div>
-
-            {/* Teléfono */}
-            <div>
-              <label htmlFor="telefono" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                Teléfono
-              </label>
-              <div className="relative">
-                <input
-                  type="tel"
-                  id="telefono"
-                  name="telefono"
-                  value={formData.telefono}
-                  onChange={handleInputChange}
-                  required
-                  className="block w-full px-4 py-3 border border-zinc-300 dark:border-zinc-600 rounded-lg shadow-sm focus:ring-2 focus:ring-[#be8f52]/50 focus:border-[#be8f52] dark:bg-zinc-700 dark:text-white text-sm"
-                  placeholder="Tu número de teléfono"
-                  maxLength={9}
-                />
-              </div>
-            </div>
-
-            {/* Artista */}
-            <div>
-              <label htmlFor="artista" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                Artista
-              </label>
-              <div className="relative">
-                <select
-                  id="artista"
-                  name="artista"
-                  value={formData.artista}
-                  onChange={handleInputChange}
-                  className="block w-full px-4 py-3 border border-zinc-300 dark:border-zinc-600 rounded-lg shadow-sm focus:ring-2 focus:ring-[#be8f52]/50 focus:border-[#be8f52] dark:bg-zinc-700 dark:text-white text-sm appearance-none"
-                >
-                  <option value="">Selecciona un artista</option>
-                  <option value="sin_preferencia">Sin preferencia</option>
-                  {artistas.map((artista) => (
-                    <option key={artista.id} value={artista.id}>
-                      {artista.nombre} - {artista.especialidad}
-                    </option>
-                  ))}
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <svg className="h-5 w-5 text-zinc-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            {/* Horario */}
-            <div>
-              <label htmlFor="horario" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                Horario preferido
-              </label>
-              <div className="relative">
-                <select
-                  id="horario"
-                  name="horario"
-                  value={formData.horario}
-                  onChange={handleInputChange}
-                  className="block w-full px-4 py-3 border border-zinc-300 dark:border-zinc-600 rounded-lg shadow-sm focus:ring-2 focus:ring-[#be8f52]/50 focus:border-[#be8f52] dark:bg-zinc-700 dark:text-white text-sm appearance-none"
-                >
-                  <option value="">Selecciona un horario</option>
-                  {horarios.map((horario) => (
-                    <option key={horario} value={horario}>
-                      {horario}
-                    </option>
-                  ))}
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <svg className="h-5 w-5 text-zinc-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Columna derecha */}
-          <div className="space-y-5">
-            <h3 className="text-lg font-semibold text-zinc-900 dark:text-white flex items-center">
-              <MapPin size={18} className="mr-2 text-[#be8f52]" /> 
-              Detalles del tatuaje
-            </h3>
-
-            {/* Zona del tatuaje */}
-            <div>
-              <label htmlFor="zonaTatuaje" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                Zona del tatuaje
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  id="zonaTatuaje"
-                  name="zonaTatuaje"
-                  value={formData.zonaTatuaje}
-                  onChange={handleInputChange}
-                  required
-                  className="block w-full px-4 py-3 border border-zinc-300 dark:border-zinc-600 rounded-lg shadow-sm focus:ring-2 focus:ring-[#be8f52]/50 focus:border-[#be8f52] dark:bg-zinc-700 dark:text-white text-sm"
-                  placeholder="Ej: Brazo, pierna, espalda..."
-                />
-              </div>
-            </div>
-
-            {/* Dimensiones */}
-            <div>
-              <label htmlFor="dimensiones" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                Dimensiones aproximadas
-              </label>
-              <input
-                type="text"
-                id="dimensiones"
-                name="dimensiones"
-                value={formData.dimensiones}
-                onChange={handleInputChange}
-                required
-                className="block w-full px-4 py-3 border border-zinc-300 dark:border-zinc-600 rounded-lg shadow-sm focus:ring-2 focus:ring-[#be8f52]/50 focus:border-[#be8f52] dark:bg-zinc-700 dark:text-white text-sm"
-                placeholder="Ej: 10x15cm, tamaño antebrazo..."
-              />
-            </div>
-
-            {/* Descripción */}
-            <div>
-              <label htmlFor="mensaje" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                Describe tu idea
-              </label>
-              <textarea
-                id="mensaje"
-                name="mensaje"
-                rows={3}
-                value={formData.mensaje}
-                onChange={handleInputChange}
-                required
-                className="block w-full px-4 py-3 border border-zinc-300 dark:border-zinc-600 rounded-lg shadow-sm focus:ring-2 focus:ring-[#be8f52]/50 focus:border-[#be8f52] dark:bg-zinc-700 dark:text-white text-sm resize-none"
-                placeholder="Describe tu idea para el tatuaje, estilo, colores, etc."
-              ></textarea>
-            </div>
-
-            {/* Subida de imágenes */}
-            <div>
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                Referencias visuales
-              </label>
-              <div className="mt-1 p-3 border-2 border-zinc-300 dark:border-zinc-600 border-dashed rounded-lg bg-zinc-50 dark:bg-zinc-700/50">
-                <div className="flex flex-col items-center justify-center">
-                  <ImageIcon className="h-7 w-7 text-zinc-400 dark:text-zinc-500 mb-2" />
-                  <div className="text-sm text-center">
-                    <label
-                      htmlFor="file-upload"
-                      className="relative cursor-pointer text-[#be8f52] hover:text-[#be8f52]/80 font-medium"
-                    >
-                      <span>Arrastra o selecciona imágenes</span>
-                      <input
-                        id="file-upload"
-                        name="file-upload"
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        onChange={handleImageChange}
-                        ref={fileInputRef}
-                        className="sr-only"
-                      />
-                    </label>
-                    <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                      PNG, JPG, GIF (max. 4MB)
-                    </p>
-                  </div>
-                </div>
-
-                {/* Previsualización de imágenes */}
-                {imagenesPreview.length > 0 && (
-                  <div className="grid grid-cols-2 gap-2 mt-4">
-                    {imagenesPreview.map((url, index) => (
-                      <div key={index} className="relative group">
-                        <img 
-                          src={url} 
-                          alt={`Vista previa ${index + 1}`} 
-                          className="h-20 w-full object-cover rounded-md border border-zinc-300 dark:border-zinc-600" 
-                        />
-                        <button
-                          type="button"
-                          onClick={() => removeImage(index)}
-                          className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 text-white opacity-80 hover:opacity-100 shadow-sm"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+      <fieldset className="grid gap-5 sm:grid-cols-2">
+        <legend className="sr-only">Tus datos</legend>
+        <div>
+          <label htmlFor="name" className={labelCls}>
+            Nombre <span className="text-gold">*</span>
+          </label>
+          <input id="name" name="name" type="text" autoComplete="given-name" required onBlur={() => onBlur("name")} className={inputCls(!!errors.name)} {...errorProps("name")} />
+          <FieldError id="name-error" message={errors.name} />
         </div>
-
-        {/* Términos y botones - ocupan todo el ancho */}
-        <div className="mt-8 space-y-5">
-          <div className="space-y-3 border-t border-zinc-200 dark:border-zinc-700 pt-5">
-            <div className="flex items-start">
-              <div className="flex items-center h-5">
-                <input
-                  id="aceptaPrivacidad"
-                  name="aceptaPrivacidad"
-                  type="checkbox"
-                  checked={formData.aceptaPrivacidad}
-                  onChange={handleInputChange}
-                  required
-                  className="h-4 w-4 text-[#be8f52] border-zinc-300 dark:border-zinc-600 rounded focus:ring-[#be8f52] dark:bg-zinc-700"
-                />
-              </div>
-              <div className="ml-3 text-sm">
-                <label htmlFor="aceptaPrivacidad" className="font-medium text-zinc-700 dark:text-zinc-300">
-                  Acepto la política de privacidad *
-                </label>
-                <p className="text-zinc-500 dark:text-zinc-400">
-                  He leído y acepto la <Link href="/privacidad" className="text-[#be8f52] hover:underline">política de privacidad</Link> de Saints & Sinners by Gamboa.
-                </p>
-              </div>
-            </div>
-            
-            <div className="flex items-start">
-              <div className="flex items-center h-5">
-                <input
-                  id="aceptaMarketing"
-                  name="aceptaMarketing"
-                  type="checkbox"
-                  checked={formData.aceptaMarketing}
-                  onChange={handleInputChange}
-                  className="h-4 w-4 text-[#be8f52] border-zinc-300 dark:border-zinc-600 rounded focus:ring-[#be8f52] dark:bg-zinc-700"
-                />
-              </div>
-              <div className="ml-3 text-sm">
-                <label htmlFor="aceptaMarketing" className="font-medium text-zinc-700 dark:text-zinc-300">
-                  Acepto recibir comunicaciones comerciales
-                </label>
-                <p className="text-zinc-500 dark:text-zinc-400">
-                  Deseo recibir información sobre promociones, eventos y novedades de Saints & Sinners by Gamboa.
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          {/* Botón de envío */}
-          <div className="text-right">
-            <motion.button
-              type="submit"
-              disabled={enviando}
-              className={`inline-flex justify-center items-center px-6 py-3 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-gradient-to-r from-[#be8f52] to-amber-500 hover:from-[#be8f52]/90 hover:to-amber-500/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#be8f52] transition-all duration-200 ${
-                enviando ? 'opacity-70 cursor-not-allowed' : ''
-              }`}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              {enviando ? (
-                <>
-                  <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Enviando...
-                </>
-              ) : (
-                <>
-                  <Send className="mr-2 h-4 w-4" />
-                  Solicitar Cita
-                </>
-              )}
-            </motion.button>
-          </div>
+        <div>
+          <label htmlFor="phone" className={labelCls}>
+            Teléfono (WhatsApp) <span className="text-gold">*</span>
+          </label>
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            required
+            placeholder="612 345 678"
+            onBlur={() => onBlur("phone")}
+            className={inputCls(!!errors.phone)}
+            {...errorProps("phone")}
+          />
+          <FieldError id="phone-error" message={errors.phone} />
         </div>
-      </form>
-    </motion.div>
+        <div className="sm:col-span-2">
+          <label htmlFor="email" className={labelCls}>
+            Email <span className="font-normal text-ash">(opcional)</span>
+          </label>
+          <input id="email" name="email" type="email" inputMode="email" autoComplete="email" onBlur={() => onBlur("email")} className={inputCls(!!errors.email)} {...errorProps("email")} />
+          <FieldError id="email-error" message={errors.email} />
+        </div>
+      </fieldset>
+
+      <fieldset className="mt-8 grid gap-5 border-t border-line pt-8 sm:grid-cols-2">
+        <legend className="sr-only">Tu tatuaje</legend>
+        <div className="sm:col-span-2">
+          <label htmlFor="idea" className={labelCls}>
+            ¿Qué te quieres tatuar? <span className="text-gold">*</span>
+          </label>
+          <textarea
+            id="idea"
+            name="idea"
+            rows={4}
+            required
+            placeholder="Ej.: una manga realista con un león y un reloj, en black and grey"
+            onBlur={() => onBlur("idea")}
+            className={cn(inputCls(!!errors.idea), "h-auto resize-y py-3")}
+            {...errorProps("idea")}
+          />
+          <FieldError id="idea-error" message={errors.idea} />
+        </div>
+        <div>
+          <label htmlFor="placement" className={labelCls}>
+            Zona del cuerpo
+          </label>
+          <input id="placement" name="placement" type="text" placeholder="Antebrazo, espalda…" className={inputCls(false)} />
+        </div>
+        <div>
+          <label htmlFor="size" className={labelCls}>
+            Tamaño aproximado
+          </label>
+          <select id="size" name="size" defaultValue="" className={cn(inputCls(false), "cursor-pointer")}>
+            <option value="">No lo sé aún</option>
+            {SIZES.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="sm:col-span-2">
+          <label htmlFor="artist" className={labelCls}>
+            Artista
+          </label>
+          <select id="artist" name="artist" defaultValue="" className={cn(inputCls(false), "cursor-pointer")}>
+            <option value="">Sin preferencia: recomendadme</option>
+            {ARTISTS.map((a) => (
+              <option key={a.slug} value={a.slug}>
+                {a.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </fieldset>
+
+      <div className="mt-8 border-t border-line pt-6">
+        <div className="flex items-start gap-3">
+          <input
+            id="privacy"
+            name="privacy"
+            type="checkbox"
+            required
+            onChange={() => errors.privacy && onBlur("privacy")}
+            className="mt-0.5 size-5 shrink-0 cursor-pointer accent-[var(--color-gold)]"
+            {...errorProps("privacy")}
+          />
+          <label htmlFor="privacy" className="text-sm leading-relaxed text-ash">
+            He leído y acepto la{" "}
+            <Link href="/privacidad" className="text-gold underline-offset-2 hover:underline">
+              política de privacidad
+            </Link>
+            . Usaremos tus datos solo para responder a tu consulta. <span className="text-gold">*</span>
+          </label>
+        </div>
+        <FieldError id="privacy-error" message={errors.privacy} />
+
+        <button
+          type="submit"
+          disabled={status === "loading"}
+          className="mt-6 inline-flex h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-[4px] bg-gold px-7 font-medium text-ink transition-colors hover:bg-gold-strong disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+        >
+          {status === "loading" ? (
+            <>
+              <Loader2 aria-hidden className="size-5 animate-spin" /> Enviando…
+            </>
+          ) : (
+            "Enviar solicitud"
+          )}
+        </button>
+        <p className="mt-3 text-xs text-ash">Sin compromiso. Te respondemos por WhatsApp.</p>
+      </div>
+    </form>
   );
-};
-
-export default ReservaForm; 
+}

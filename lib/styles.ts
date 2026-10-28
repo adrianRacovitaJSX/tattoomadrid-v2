@@ -18,7 +18,7 @@ export const STYLES: TattooStyle[] = [
     slug: 'realismo',
     name: 'Realismo',
     h1: 'Tatuajes realistas en Madrid',
-    metaTitle: 'Tatuajes Realistas en Madrid — Retratos y Mangas',
+    metaTitle: 'Tatuajes Realistas en Madrid',
     metaDescription:
       'Tatuajes realistas en Madrid: retratos, animales y mangas completas en black and grey. Mira trabajos reales del estudio y pide presupuesto por WhatsApp.',
     lead: 'El realismo reproduce en la piel una imagen con volumen, luz y textura de fotografía; en Saints & Sinners es la especialidad del estudio.',
@@ -63,7 +63,7 @@ export const STYLES: TattooStyle[] = [
     slug: 'fine-line',
     name: 'Fine line',
     h1: 'Tatuajes fine line y mini tattoos en Madrid',
-    metaTitle: 'Tatuajes Fine Line y Mini Tattoos en Madrid',
+    metaTitle: 'Tatuajes Fine Line en Madrid',
     metaDescription:
       'Tatuajes de línea fina y mini tattoos en Madrid: letras, símbolos, fechas y constelaciones. Oferta 3 mini tattoos por 100 €. Reserva por WhatsApp.',
     lead: 'El fine line usa agujas muy finas para trazos delicados: letras, símbolos, fechas o constelaciones en tamaño pequeño.',
@@ -83,7 +83,7 @@ export const STYLES: TattooStyle[] = [
     slug: 'japones',
     name: 'Japonés',
     h1: 'Tatuajes japoneses en Madrid',
-    metaTitle: 'Tatuajes Japoneses en Madrid — Dragones, Hannya y Mangas',
+    metaTitle: 'Tatuajes Japoneses en Madrid',
     metaDescription:
       'Tatuajes de inspiración japonesa en Madrid: dragones, máscaras hannya, flores de cerezo y mangas completas. Mira trabajos reales y pide presupuesto.',
     lead: 'El tatuaje japonés usa motivos tradicionales (dragones, hannya, koi, flores de cerezo) organizados para fluir con el cuerpo.',

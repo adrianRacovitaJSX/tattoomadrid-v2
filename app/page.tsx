@@ -22,9 +22,9 @@ import {
 } from '@/components/site/sections';
 
 export const metadata = buildMetadata({
-  title: 'Estudio de Tatuajes en Madrid desde 2008',
+  title: 'Estudio de Tatuajes en Madrid desde 2008 | Saints & Sinners',
   description:
-    'Estudio de tatuajes en Madrid (Ciudad Lineal) especializado en realismo y black and grey. Mira trabajos reales, conoce a los artistas y pide presupuesto por WhatsApp.',
+    'Estudio de tatuajes en Madrid (Ciudad Lineal) especializado en realismo y black and grey. Mira trabajos reales y pide presupuesto por WhatsApp.',
   path: '/',
   ogTitle: 'Estudio de tatuajes en Madrid',
   ogKicker: 'Desde 2008 · Realismo, black and grey y piercing',

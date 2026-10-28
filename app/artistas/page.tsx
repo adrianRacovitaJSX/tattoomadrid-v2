@@ -9,7 +9,7 @@ import { Breadcrumbs, Container, CtaBand } from '@/components/site/blocks';
 import { WhatsAppLink } from '@/components/site/cta-link';
 
 export const metadata = buildMetadata({
-  title: 'Tatuadores en Madrid — Nuestros Artistas',
+  title: 'Tatuadores en Madrid: Nuestros Artistas',
   description:
     'Conoce a los tatuadores de Saints & Sinners en Madrid: Gamboa, Mauri y Grietaz. Mira el portfolio de cada artista y reserva con quien encaje con tu idea.',
   path: '/artistas',
