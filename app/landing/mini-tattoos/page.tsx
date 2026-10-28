@@ -4,7 +4,7 @@ import { DEFAULT_OG_IMAGE, SITE_URL } from "@/lib/seo";
 
 const TITLE = "3 Mini Tattoos por 100 € en Madrid | Saints & Sinners";
 const DESCRIPTION =
-  "Oferta: 3 mini tattoos por 100 € en Saints & Sinners, estudio de tatuajes en Ciudad Lineal, Madrid. Diseño incluido, mismo día, fine line y minimalista. Reserva por WhatsApp.";
+  "3 mini tattoos por 100 € en Saints & Sinners, estudio de tatuajes en Ciudad Lineal (Madrid). Diseño incluido, en una sola cita. Reserva por WhatsApp.";
 
 export const metadata: Metadata = {
   title: TITLE,

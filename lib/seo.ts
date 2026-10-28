@@ -81,8 +81,9 @@ export function buildMetadata(input: BuildMetadataInput): Metadata {
           }
         : {}),
     },
+    // noindex conserva follow: los enlaces de la página siguen pasando autoridad.
     robots: input.noindex
-      ? { index: false, follow: false }
+      ? { index: false, follow: true }
       : {
           index: true,
           follow: true,

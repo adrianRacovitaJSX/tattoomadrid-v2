@@ -88,8 +88,8 @@ export default function PortfolioGrid({ pieces, filters = false, priorityCount =
               type="button"
               onClick={() => open(i)}
               className="group relative block w-full cursor-zoom-in overflow-hidden rounded-[4px] bg-surface-1 text-left"
-              aria-label={`Ampliar: ${piece.title}`}
             >
+              <span className="sr-only">Ampliar foto: </span>
               <Image
                 src={piece.src}
                 alt={piece.alt}

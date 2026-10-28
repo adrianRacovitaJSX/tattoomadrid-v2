@@ -12,6 +12,7 @@ export const metadata = buildMetadata({
   description:
     'Piercing en Madrid desde 30 €: orejas, nariz, ombligo y más con joyería de titanio y material de un solo uso. Estudio en Ciudad Lineal. Pide cita por WhatsApp.',
   path: '/piercing-madrid',
+  mdSlug: 'piercing-madrid',
   ogTitle: 'Piercing en Madrid',
   ogKicker: 'Desde 30 € · Ciudad Lineal',
   keywords: ['piercing Madrid', 'piercing cerca de mi', 'piercing Ciudad Lineal', 'estudio de piercing Madrid'],

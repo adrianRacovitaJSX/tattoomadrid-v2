@@ -45,15 +45,14 @@ const AI_BOTS = [
 ];
 
 export default function robots(): MetadataRoute.Robots {
+  // No bloquear /_next/ (CSS y JS que Google necesita para renderizar) ni las
+  // páginas legales: llevan noindex y Google solo lo ve si puede rastrearlas.
   const sharedDisallow = [
     '/api/',
     '/automations',
-    '/automations/',
+    '/panel',
+    '/admin',
     '/landing/gracias',
-    '/_next/',
-    '/aviso-legal',
-    '/privacidad',
-    '/cookies',
   ];
 
   // Recursos que sí queremos servir explícitamente para LLMs.

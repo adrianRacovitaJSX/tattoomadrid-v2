@@ -3,19 +3,14 @@ import { ArrowUpRight } from 'lucide-react';
 import { WhatsAppLink } from '@/components/site/cta-link';
 
 type Props = {
-  // Sección concreta de /servicios a la que enlazar mediante ancla.
-  // Útil para topic clustering: cada post enlaza al servicio relacionado.
-  servicesAnchor?: string;
-  servicesLabel?: string;
+  /** Página comercial a la que apoya el post (ver lib/blog-links.ts). */
+  href: string;
+  /** Texto del enlace: la búsqueda que debe posicionar esa página. */
+  label: string;
 };
 
-/** Cierre de cada post: lleva el tráfico informativo a ver trabajos o a pedir presupuesto. */
-export default function RelatedCta({
-  servicesAnchor = '',
-  servicesLabel = 'Mira nuestros trabajos',
-}: Props) {
-  const href = servicesAnchor === 'tatuajes' || !servicesAnchor ? '/tatuajes' : `/servicios#${servicesAnchor}`;
-
+/** Cierre de cada post: lleva el tráfico informativo a la página comercial o a pedir presupuesto. */
+export default function RelatedCta({ href, label }: Props) {
   return (
     <aside aria-label="Próximo paso" className="not-prose my-12 grid gap-4 md:grid-cols-2">
       <Link
@@ -23,12 +18,12 @@ export default function RelatedCta({
         className="group flex flex-col justify-between gap-4 rounded-[4px] border border-line bg-surface-1 p-6 transition-colors hover:border-gold/60"
       >
         <div>
-          <p className="eyebrow mb-2">Portfolio</p>
-          <h3 className="font-display text-2xl text-bone">{servicesLabel}</h3>
-          <p className="mt-2 text-sm text-ash">Tatuajes reales hechos en nuestro estudio de Madrid, filtrados por estilo.</p>
+          <p className="eyebrow mb-2">Saints &amp; Sinners</p>
+          <h3 className="font-display text-2xl text-bone">{label}</h3>
+          <p className="mt-2 text-sm text-ash">Trabajos reales, precios y cómo pedir cita en nuestro estudio de Madrid.</p>
         </div>
         <span className="inline-flex items-center gap-1 text-sm font-medium text-gold">
-          Ver trabajos <ArrowUpRight aria-hidden className="size-4" />
+          Ver más <ArrowUpRight aria-hidden className="size-4" />
         </span>
       </Link>
 

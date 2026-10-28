@@ -1,4 +1,6 @@
-import { buildMetadata } from '@/lib/seo';
+import JsonLd from '@/components/json-ld';
+import { buildMetadata, SITE_URL } from '@/lib/seo';
+import { ARTISTS } from '@/lib/artists';
 import { PIECES } from '@/lib/portfolio';
 import { Breadcrumbs, Container, CtaBand, Section, SectionHeader } from '@/components/site/blocks';
 import PortfolioGrid from '@/components/site/portfolio-grid';
@@ -9,6 +11,7 @@ export const metadata = buildMetadata({
   description:
     'Galería de tatuajes hechos en Saints & Sinners, Madrid: mangas realistas, black and grey, japonés y fine line. Filtra por estilo y pide presupuesto por WhatsApp.',
   path: '/tatuajes',
+  mdSlug: 'tatuajes',
   ogTitle: 'Trabajos reales del estudio',
   ogKicker: 'Tatuajes en Madrid',
   keywords: ['tatuajes Madrid', 'portfolio tatuajes Madrid', 'mangas tatuaje Madrid'],
@@ -17,6 +20,28 @@ export const metadata = buildMetadata({
 export default function TatuajesPage() {
   return (
     <>
+      <JsonLd
+        id="ld-gallery"
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'ImageGallery',
+          name: 'Tatuajes hechos en Saints & Sinners Madrid',
+          url: `${SITE_URL}/tatuajes`,
+          about: { '@id': `${SITE_URL}/#business` },
+          image: PIECES.map((p) => ({
+            '@type': 'ImageObject',
+            contentUrl: `${SITE_URL}${p.src}`,
+            name: p.title,
+            caption: p.alt,
+            width: p.width,
+            height: p.height,
+            ...(p.artist
+              ? { creator: { '@type': 'Person', name: ARTISTS.find((a) => a.slug === p.artist)?.name } }
+              : { creator: { '@id': `${SITE_URL}/#business` } }),
+            copyrightHolder: { '@id': `${SITE_URL}/#business` },
+          })),
+        }}
+      />
       <section aria-labelledby="tatuajes-h1" className="pt-28 lg:pt-36">
         <Container>
           <Breadcrumbs items={[{ name: 'Trabajos', path: '/tatuajes' }]} />

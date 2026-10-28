@@ -152,7 +152,7 @@ const CookieConsentBanner = () => {
                       analizar el tráfico del sitio y personalizar contenido. Puedes aceptar todas, 
                       rechazar las no esenciales o configurar tus preferencias.{' '}
                       <Link href="/cookies" className="text-[#be8f52] hover:underline">
-                        Más información
+                        Más información sobre cookies
                       </Link>
                     </p>
                   </div>

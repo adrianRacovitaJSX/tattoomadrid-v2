@@ -40,20 +40,20 @@ export default function Footer() {
 
         <nav aria-label="Estilos y artistas">
           <h2 className="eyebrow mb-4">Estilos</h2>
-          <ul className="space-y-3 text-sm">
+          <ul className="space-y-1 text-sm">
             {STYLES.map((s) => (
               <li key={s.slug}>
-                <Link href={`/tatuajes/${s.slug}`} className="text-bone/80 hover:text-gold">
+                <Link href={`/tatuajes/${s.slug}`} className="inline-flex min-h-10 items-center text-bone/80 hover:text-gold">
                   {s.h1}
                 </Link>
               </li>
             ))}
           </ul>
           <h2 className="eyebrow mb-4 mt-8">Artistas</h2>
-          <ul className="space-y-3 text-sm">
+          <ul className="space-y-1 text-sm">
             {ARTISTS.map((a) => (
               <li key={a.slug}>
-                <Link href={`/artistas/${a.slug}`} className="text-bone/80 hover:text-gold">
+                <Link href={`/artistas/${a.slug}`} className="inline-flex min-h-10 items-center text-bone/80 hover:text-gold">
                   {a.name}
                 </Link>
               </li>
@@ -63,10 +63,10 @@ export default function Footer() {
 
         <nav aria-label="Servicios">
           <h2 className="eyebrow mb-4">Estudio</h2>
-          <ul className="space-y-3 text-sm">
+          <ul className="space-y-1 text-sm">
             {SERVICES.map((s) => (
               <li key={s.href}>
-                <Link href={s.href} className="text-bone/80 hover:text-gold">
+                <Link href={s.href} className="inline-flex min-h-10 items-center text-bone/80 hover:text-gold">
                   {s.name}
                 </Link>
               </li>
@@ -89,12 +89,11 @@ export default function Footer() {
               </div>
             ))}
           </dl>
-          <p>
-            <a href={TEL_HREF} className="tabular text-bone hover:text-gold">
+          <p className="flex flex-col">
+            <a href={TEL_HREF} className="tabular inline-flex min-h-11 items-center text-bone hover:text-gold">
               {BUSINESS.phone}
             </a>
-            <br />
-            <a href={`mailto:${BUSINESS.email}`} className="text-bone/80 hover:text-gold">
+            <a href={`mailto:${BUSINESS.email}`} className="inline-flex min-h-11 items-center text-bone/80 hover:text-gold">
               {BUSINESS.email}
             </a>
           </p>

@@ -14,6 +14,7 @@ import {
 import { Separator } from '@/components/ui/separator';
 import JsonLd from '@/components/json-ld';
 import RelatedCta from '@/components/blog/related-cta';
+import { commercialLinkForPost } from '@/lib/blog-links';
 import TLDR from '@/components/tldr';
 import { BlogPortableText } from '@/components/blog/portable-text';
 import { buildMetadata } from '@/lib/seo';
@@ -205,10 +206,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                   <BlogPortableText value={post.body} />
                 </div>
 
-                <RelatedCta
-                  servicesAnchor="tatuajes"
-                  servicesLabel="Tatuajes personalizados en Madrid"
-                />
+                <RelatedCta {...commercialLinkForPost(post.slug)} />
 
                 <Separator className="my-8 bg-gray-200 dark:bg-zinc-800" />
 

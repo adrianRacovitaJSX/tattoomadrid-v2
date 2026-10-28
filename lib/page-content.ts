@@ -1,6 +1,16 @@
-// Contenido en Markdown plano de las páginas principales — fuente única
-// para llms.txt, llms-full.txt y /md/[slug]. Mantenerlo sincronizado con
-// los componentes JSX cuando cambien títulos, precios o FAQs.
+// Contenido en Markdown de las páginas comerciales — fuente para llms.txt,
+// llms-full.txt y /md/[slug]. Se genera desde los mismos datos que la web
+// (precios, estilos, artistas, horario, FAQ), así que no se desincroniza.
+// Las rutas /md/blog y /md/blog/<slug> se sirven desde Sanity.
+
+import { BUSINESS, SITE_URL } from './seo';
+import { ADDRESS_LINE, HOURS_LINES } from './contact';
+import { SERVICE_PRICES, DEPOSIT } from './services';
+import { STYLES } from './styles';
+import { ARTISTS, artistIsReady } from './artists';
+import { PIECES, piecesByArtist, piecesByStyle } from './portfolio';
+import { PROMOS } from './promos';
+import { CONTACT_FAQS, HOME_FAQS } from './faqs';
 
 export type PageContent = {
   slug: string;
@@ -9,153 +19,182 @@ export type PageContent = {
   body: string;
 };
 
-const HOME_MD = `# Saints & Sinners Tattoo Madrid — Estudio de tatuajes profesional desde 2008
+const url = (path: string) => `${SITE_URL}${path}`;
+const faqMd = (faqs: { question: string; answer: string }[]) =>
+  faqs.map((f) => `### ${f.question}\n${f.answer}`).join('\n\n');
 
-> Saints & Sinners es un estudio de tatuajes en Madrid con más de 17 años de historia. Tatuajes personalizados, piercing y micropigmentación realizados por un equipo especializado en realismo, chicano, neotradicional y fine line. Confirmamos las citas en menos de 24 horas.
+const hoursMd = HOURS_LINES.map((h) => `- ${h.days}: ${h.time}`).join('\n');
 
-## Sobre el estudio
+const nap = `## Dónde estamos
 
-Saints & Sinners Tattoo Madrid es un estudio dirigido por el tatuador Gamboa, abierto desde 2008 en Madrid. Trabajamos por cita previa con consulta artística gratuita y nuestro equipo cubre los principales estilos contemporáneos: realismo, chicano, black & grey, neotradicional, fine line, lettering y diseño exclusivo.
+- Dirección: ${ADDRESS_LINE} (Ciudad Lineal)
+- Teléfono y WhatsApp: ${BUSINESS.phone}
+- Email: ${BUSINESS.email}
 
-## Servicios principales
+Horario:
+${hoursMd}`;
 
-- Tatuaje personalizado (desde 70 €)
-- Piercing facial y corporal (desde 30 €)
-- Micropigmentación de cejas (desde 250 €)
-- Eliminación láser de tatuajes (desde 60 € por sesión)
-- Diseño exclusivo de tatuaje incluido en la sesión
+const pricesTable = [
+  '| Servicio | Desde | Duración | Sesiones | Cuidados |',
+  '| --- | --- | --- | --- | --- |',
+  ...SERVICE_PRICES.map((s) => `| ${s.servicio} | ${s.desde} | ${s.duracion} | ${s.sesiones} | ${s.cuidados} |`),
+].join('\n');
 
-## Cómo reservar
+const offersMd = PROMOS.map((p) => `- **${p.title}: ${p.price}** (${p.priceNote}). ${p.description} [Ver oferta](${url(p.href)})`).join('\n');
 
-Completa el formulario en [/reservar](https://tattoomadrid.com/reservar). Te confirmamos disponibilidad en menos de 24 horas. Para reservar la cita pedimos un depósito de 50 € que se descuenta del precio final del tatuaje.
-`;
+const readyArtists = ARTISTS.filter(artistIsReady);
 
-const SERVICIOS_MD = `# Servicios de tatuajes en Madrid — Saints & Sinners
+const HOME_MD = `# Saints & Sinners Tattoo Madrid — Estudio de tatuajes en Madrid desde ${BUSINESS.founded}
 
-> Saints & Sinners ofrece tatuaje personalizado, piercing, micropigmentación y eliminación láser en su estudio de Madrid. Las tarifas comienzan en 70 € para tatuajes pequeños, 30 € para piercings, 250 € para micropigmentación de cejas y 60 € por sesión de láser. Todos los servicios incluyen consulta previa gratuita.
+> Estudio de tatuajes y piercing en Ciudad Lineal, Madrid, abierto desde ${BUSINESS.founded}. Especialistas en realismo y black and grey: mangas, espaldas y proyectos a medida. Tatuajes desde 70 € con diseño incluido.
 
-## Comparativa de servicios
+## Estilos
 
-| Servicio | Precio desde | Duración | Sesiones | Cuidados clave |
-|---|---|---|---|---|
-| Tatuaje personalizado | 70 € | 1–6 h | 1–4 | Limpieza diaria 2 semanas + crema cicatrizante |
-| Piercing facial / corporal | 30 € | 10–30 min | 1 | Suero fisiológico 2 veces al día, 4–8 semanas |
-| Micropigmentación cejas | 250 € | 2–3 h | 2 (con repaso a las 4–6 semanas) | Sin agua ni cremas grasas durante 7 días |
-| Eliminación láser | 60 € por sesión | 15–30 min | 5–10 (separadas 6–8 semanas) | Hidratación + protección solar SPF 50 |
-| Diseño exclusivo | Incluido en sesión | Boceto 2–7 días | — | — |
+${STYLES.map((s) => `- [${s.h1}](${url(`/tatuajes/${s.slug}`)}): ${s.lead}`).join('\n')}
 
-## Tatuaje personalizado
+## Artistas
 
-Diseños a medida en realismo, neotradicional, blackwork, japonés, fine line y acuarela. Incluye consulta previa gratuita y un retoque sin coste en los primeros 3 meses tras el tatuaje.
+${ARTISTS.map((a) => `- [${a.name}](${url(`/artistas/${a.slug}`)})${artistIsReady(a) ? `: ${a.tagline}` : ''}`).join('\n')}
 
-## Piercing
+## Ofertas
 
-Perforaciones realizadas con joyería de titanio implant grade y técnica estéril desechable. Asesoramiento por profesional certificado en control de infecciones.
+${offersMd}
 
-## Micropigmentación
+## Precios orientativos
 
-Cejas pelo a pelo, eyeliner y micropigmentación capilar con técnicas hiperrealistas y materiales hipoalergénicos. Repaso incluido entre las 4 y 6 semanas posteriores.
-
-## Eliminación láser de tatuajes
-
-Eliminación o aclarado mediante láser Q-Switched de última generación. Plan personalizado según pigmento, profundidad y tono de piel.
+${pricesTable}
 
 ## Preguntas frecuentes
 
-### ¿Cuál es el proceso para agendar una cita?
-Por teléfono, email o el formulario de [/reservar](https://tattoomadrid.com/reservar). Respondemos en menos de 24 horas para confirmar disponibilidad.
+${faqMd(HOME_FAQS)}
 
-### ¿Necesito una consulta previa antes de tatuarme?
-Para tatuajes personalizados sí — la consulta es gratuita y sirve para definir diseño, tamaño, ubicación y presupuesto. Para diseños pequeños o flash no es obligatoria.
+${nap}`;
 
-### ¿Cuánto cuesta un tatuaje?
-Las tarifas comienzan en 70 € para piezas pequeñas. El precio final depende de tamaño, complejidad, ubicación y artista. Trabajamos por sesión o por proyecto completo.
+const TATUAJES_MD = `# Tatuajes en Madrid: trabajos reales de Saints & Sinners
 
-### ¿Es seguro hacerse un tatuaje o piercing?
-Sí. Cumplimos los protocolos de higiene y la normativa española aplicable. Material esterilizado o desechable y artistas certificados en control de infecciones.
+> Galería de ${PIECES.length} tatuajes hechos en el estudio, en ${STYLES.map((s) => s.name.toLowerCase()).join(', ')}.
 
-### ¿Cuánto tarda en sanar un tatuaje?
-La sanación superficial dura unas 2 semanas; la cicatrización completa se prolonga hasta 4–6 semanas siguiendo las instrucciones de cuidado.
-`;
+${PIECES.map((p) => `- ${p.title} (${p.placement}): ${p.alt}.`).join('\n')}
 
-const RESERVAR_MD = `# Reserva tu cita — Saints & Sinners Tattoo Madrid
+Estilos: ${STYLES.map((s) => `[${s.name}](${url(`/tatuajes/${s.slug}`)})`).join(' · ')}`;
 
-> Reserva una sesión de tatuaje, piercing o micropigmentación en Saints & Sinners Tattoo Madrid completando el formulario online. Te confirmamos disponibilidad en menos de 24 horas y solicitamos un depósito de 50 € que se descuenta del precio final.
+const styleMd = (slug: (typeof STYLES)[number]['slug']) => {
+  const s = STYLES.find((st) => st.slug === slug)!;
+  const pieces = piecesByStyle(slug);
+  return `# ${s.h1}
 
-## Cómo funciona la reserva
+> ${s.lead}
 
-1. Rellena el formulario con tus datos, el servicio que quieres y una descripción del diseño.
-2. Te respondemos en menos de 24 horas con disponibilidad y precio orientativo.
-3. Confirmamos la cita con un depósito de 50 € (transferencia o Bizum).
-4. Acudes a la sesión en nuestro estudio de Madrid.
+${s.body.join('\n\n')}
 
-## Datos de contacto
+## Trabajos de ${s.name.toLowerCase()} en el estudio
 
-- Email: info@tattoomadrid.com
-- Web: https://tattoomadrid.com
-- Instagram: https://www.instagram.com/saintsandsinnersmadrid/
-
-## Formas de pago aceptadas
-
-Efectivo, tarjeta de crédito y débito, transferencia bancaria y Bizum. Para el depósito inicial preferimos transferencia o Bizum.
-`;
-
-const CONTACTO_MD = `# Contacto — Saints & Sinners Tattoo Madrid
-
-> Contacta con Saints & Sinners Tattoo Madrid por email, teléfono o formulario web. Respondemos consultas en 24–48 horas laborables. Ofrecemos presupuestos sin compromiso y consulta presencial gratuita para tatuajes medianos y grandes.
-
-## Datos de contacto
-
-- Email: info@tattoomadrid.com
-- Web: https://tattoomadrid.com
+${pieces.map((p) => `- ${p.title} (${p.placement}): ${p.alt}.`).join('\n')}
 
 ## Preguntas frecuentes
 
-### ¿Cuánto tardáis en responder?
-Respondemos consultas en un plazo máximo de 24–48 horas laborables. Para urgencias, llamada directa.
+${faqMd(s.faqs)}
 
-### ¿Cómo funciona la reserva de cita?
-Una vez recibimos tu solicitud confirmamos disponibilidad. Para fijar la cita pedimos un depósito de 50 € que se descuenta del precio final del tatuaje.
+Pide presupuesto por WhatsApp al ${BUSINESS.phone} o en ${url('/reservar')}.`;
+};
 
-### ¿Puedo pedir presupuesto sin compromiso?
-Sí, presupuesto sin compromiso. Para más precisión, indica diseño, tamaño y ubicación con referencias visuales.
+const ARTISTAS_MD = `# Tatuadores de Saints & Sinners en Madrid
 
-### ¿Qué formas de pago aceptáis?
-Efectivo, tarjetas de crédito/débito, transferencia bancaria y Bizum.
+> El equipo de Saints & Sinners: ${ARTISTS.map((a) => a.name).join(', ')}. Cada artista tiene su especialidad; si no sabes con quién, te recomendamos.
 
-### ¿Necesito consulta presencial antes del tatuaje?
-Para tatuajes medianos o grandes recomendamos consulta presencial. Para diseños pequeños se gestiona online. La consulta es siempre gratuita.
-`;
+${readyArtists.map((a) => `## [${a.name}](${url(`/artistas/${a.slug}`)})\n\n${a.tagline}\n\n${a.bio.join('\n\n')}`).join('\n\n')}`;
 
-// Las rutas /md/blog y /md/blog/<slug> se sirven dinámicamente desde Sanity
-// (ver app/md/[...slug]/route.ts). El contenido estático aquí cubre solo las
-// páginas comerciales que no cambian a través del CMS.
+const artistMd = (slug: string) => {
+  const a = ARTISTS.find((ar) => ar.slug === slug)!;
+  return `# ${a.name}, tatuador en Madrid
+
+> ${a.tagline}
+
+${a.bio.join('\n\n')}
+
+## Trabajos
+
+${piecesByArtist(a.slug).map((p) => `- ${p.title} (${p.placement}): ${p.alt}.`).join('\n')}`;
+};
+
+const PRECIOS_MD = `# ¿Cuánto cuesta un tatuaje en Madrid?
+
+> En Saints & Sinners los tatuajes empiezan en 70 € con el diseño incluido. El precio final depende del tamaño, el detalle y la zona; damos presupuesto cerrado antes de empezar. Para reservar fecha se deja una señal de ${DEPOSIT} que se descuenta del total.
+
+${pricesTable}
+
+## Ofertas con precio cerrado
+
+${offersMd}
+
+## Qué influye en el precio
+
+- Tamaño: más superficie, más horas.
+- Detalle y estilo: el realismo lleva más tiempo que la línea fina.
+- Zona del cuerpo: costillas, manos o cuello son más lentas.
+- Sesiones: las piezas grandes se planifican por sesiones.`;
+
+const OFERTAS_MD = `# Ofertas de tatuajes en Madrid
+
+> Ofertas con precio cerrado y diseño incluido en Saints & Sinners. Plazas limitadas cada semana.
+
+${offersMd}`;
+
+const piercing = SERVICE_PRICES.find((s) => s.id === 'piercing')!;
+const PIERCING_MD = `# Piercing en Madrid
+
+> Piercings desde ${piercing.desde} en el estudio de Ciudad Lineal, con joyería de titanio, agujas de un solo uso y guía de cuidados.
+
+- Duración: ${piercing.duracion}
+- Cuidados: ${piercing.cuidados}
+
+${nap}`;
+
+const SERVICIOS_MD = `# Servicios de Saints & Sinners en Madrid
+
+> Tatuaje, piercing, micropigmentación y eliminación láser en el mismo estudio, con presupuesto antes de empezar.
+
+${pricesTable}
+
+## Higiene
+
+Material de un solo uso abierto delante del cliente, cabina esterilizada y licencia sanitaria de la Comunidad de Madrid.`;
+
+const RESERVAR_MD = `# Pedir cita en Saints & Sinners Tattoo Madrid
+
+> La forma más rápida es WhatsApp (${BUSINESS.phone}): envía la idea, la zona y una foto de referencia. También hay formulario en ${url('/reservar')}.
+
+## Señal y pagos
+
+Para reservar fecha se deja una señal de ${DEPOSIT} que se descuenta del precio final. Aceptamos efectivo, tarjeta y Bizum.
+
+## Preguntas frecuentes
+
+${faqMd(CONTACT_FAQS)}
+
+${nap}`;
 
 export const PAGES: PageContent[] = [
-  {
-    slug: 'index',
-    title: 'Saints & Sinners Tattoo Madrid',
-    description: 'Estudio de tatuajes profesional en Madrid desde 2008.',
-    body: HOME_MD,
-  },
-  {
-    slug: 'servicios',
-    title: 'Servicios de tatuajes en Madrid',
-    description: 'Tatuaje, piercing, micropigmentación y eliminación láser.',
-    body: SERVICIOS_MD,
-  },
-  {
-    slug: 'reservar',
-    title: 'Reserva tu cita',
-    description: 'Formulario y proceso de reserva con depósito de 50 €.',
-    body: RESERVAR_MD,
-  },
-  {
-    slug: 'contacto',
-    title: 'Contacto',
-    description: 'Datos de contacto y FAQ del estudio.',
-    body: CONTACTO_MD,
-  },
+  { slug: 'index', title: 'Saints & Sinners Tattoo Madrid', description: 'Estudio de tatuajes en Madrid desde 2008.', body: HOME_MD },
+  { slug: 'tatuajes', title: 'Tatuajes en Madrid: trabajos reales', description: 'Galería de trabajos del estudio por estilo.', body: TATUAJES_MD },
+  ...STYLES.map((s) => ({
+    slug: `tatuajes/${s.slug}`,
+    title: s.h1,
+    description: s.lead,
+    body: styleMd(s.slug),
+  })),
+  { slug: 'artistas', title: 'Tatuadores de Saints & Sinners', description: 'El equipo de artistas del estudio.', body: ARTISTAS_MD },
+  ...readyArtists.map((a) => ({
+    slug: `artistas/${a.slug}`,
+    title: `${a.name}, tatuador en Madrid`,
+    description: a.tagline,
+    body: artistMd(a.slug),
+  })),
+  { slug: 'precios', title: 'Precios de tatuajes en Madrid', description: 'Precios orientativos, señal y ofertas.', body: PRECIOS_MD },
+  { slug: 'ofertas', title: 'Ofertas de tatuajes en Madrid', description: 'Ofertas con precio cerrado.', body: OFERTAS_MD },
+  { slug: 'piercing-madrid', title: 'Piercing en Madrid', description: 'Piercing desde 30 € en Ciudad Lineal.', body: PIERCING_MD },
+  { slug: 'servicios', title: 'Servicios del estudio', description: 'Tatuaje, piercing, micropigmentación y láser.', body: SERVICIOS_MD },
+  { slug: 'reservar', title: 'Pedir cita', description: 'WhatsApp, formulario, señal y pagos.', body: RESERVAR_MD },
 ];
 
 export function findPage(slug: string): PageContent | undefined {

@@ -9,6 +9,7 @@ export const metadata = buildMetadata({
   description:
     'Ofertas de tatuajes en Madrid: 3 mini tattoos por 100 € y media manga por 850 € con precio cerrado y diseño incluido. Reserva por WhatsApp en Saints & Sinners.',
   path: '/ofertas',
+  mdSlug: 'ofertas',
   ogTitle: 'Ofertas de tatuajes en Madrid',
   ogKicker: '3 mini tattoos por 100 € · Manga por 850 €',
   keywords: ['ofertas tatuajes Madrid', 'oferta tatuajes Madrid', 'tatuajes baratos Madrid', '2x1 tatuajes Madrid'],

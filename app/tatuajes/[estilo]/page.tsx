@@ -30,6 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: style.metaTitle,
     description: style.metaDescription,
     path: `/tatuajes/${style.slug}`,
+    mdSlug: `tatuajes/${style.slug}`,
     image: cover ? `${SITE_URL}${cover.src}` : undefined,
     keywords: [style.h1.toLowerCase(), `tatuador ${style.name.toLowerCase()} Madrid`],
   });

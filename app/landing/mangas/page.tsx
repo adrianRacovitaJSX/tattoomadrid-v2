@@ -4,7 +4,7 @@ import { DEFAULT_OG_IMAGE, SITE_URL } from "@/lib/seo";
 
 const TITLE = "Manga de Tatuaje por 850 € en Madrid | Saints & Sinners";
 const DESCRIPTION =
-  "Oferta: manga interna o externa por 850 € en Saints & Sinners, estudio de tatuajes en Ciudad Lineal, Madrid. Diseño personalizado, precio cerrado, sesiones incluidas. Consulta gratuita.";
+  "Media manga interna o externa por 850 € en Saints & Sinners (Ciudad Lineal, Madrid). Diseño a medida, precio cerrado y sesiones incluidas.";
 
 export const metadata: Metadata = {
   title: TITLE,

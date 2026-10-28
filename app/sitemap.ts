@@ -3,6 +3,10 @@ import { sanityFetch } from '@/sanity/lib/fetch';
 import { sitemapPostsQuery } from '@/sanity/lib/queries';
 import { STYLES } from '@/lib/styles';
 import { ARTISTS, artistIsReady } from '@/lib/artists';
+import { PIECES, piecesByArtist, piecesByStyle } from '@/lib/portfolio';
+
+// Sitemap de imágenes: los trabajos del portfolio para Google Imágenes.
+const img = (srcs: string[]) => srcs.map((src) => `${SITE_URL}${src}`);
 
 const SITE_URL = 'https://tattoomadrid.com';
 
@@ -69,12 +73,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: SITE_LAST_UPDATED,
       changeFrequency: 'monthly' as const,
       priority: 0.9,
+      ...(path === '/tatuajes' ? { images: img(PIECES.map((p) => p.src)) } : {}),
     })),
     ...STYLES.map((style) => ({
       url: `${SITE_URL}/tatuajes/${style.slug}`,
       lastModified: SITE_LAST_UPDATED,
       changeFrequency: 'monthly' as const,
       priority: 0.9,
+      images: img(piecesByStyle(style.slug).map((p) => p.src)),
     })),
     // Solo artistas con portfolio publicado (los demás van con noindex).
     ...ARTISTS.filter(artistIsReady).map((artist) => ({
@@ -82,6 +88,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: SITE_LAST_UPDATED,
       changeFrequency: 'monthly' as const,
       priority: 0.8,
+      images: img(piecesByArtist(artist.slug).map((p) => p.src)),
     })),
     {
       url: `${SITE_URL}/blog`,

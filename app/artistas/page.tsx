@@ -13,6 +13,7 @@ export const metadata = buildMetadata({
   description:
     'Conoce a los tatuadores de Saints & Sinners en Madrid: Gamboa, Mauri y Grietaz. Mira el portfolio de cada artista y reserva con quien encaje con tu idea.',
   path: '/artistas',
+  mdSlug: 'artistas',
   ogTitle: 'Los artistas de Saints & Sinners',
   ogKicker: 'Tatuadores en Madrid',
   keywords: ['tatuadores Madrid', 'mejores tatuadores de Madrid', 'tatuador realismo Madrid'],

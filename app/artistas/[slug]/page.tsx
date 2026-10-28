@@ -31,6 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ? `${artist.tagline} Mira el portfolio de ${artist.name} en Saints & Sinners Madrid y reserva por WhatsApp.`
       : `${artist.name} tatúa en Saints & Sinners, estudio de tatuajes en Madrid. Escríbenos para ver sus trabajos y reservar.`,
     path: `/artistas/${artist.slug}`,
+    mdSlug: artistIsReady(artist) ? `artistas/${artist.slug}` : undefined,
     image: artistCover(artist) ? `${SITE_URL}${artistCover(artist)}` : undefined,
     type: 'profile',
     // Sin portfolio publicado la página es contenido escaso: no se indexa hasta tenerlo.

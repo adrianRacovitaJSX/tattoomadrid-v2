@@ -1,4 +1,5 @@
 import { BUSINESS, SITE_URL, SITE_NAME, absoluteUrl } from './seo';
+import { MAPS_URL } from './contact';
 
 const BUSINESS_ID = `${SITE_URL}/#business`;
 const WEBSITE_ID = `${SITE_URL}/#website`;
@@ -15,8 +16,9 @@ export function organizationSchema() {
     url: SITE_URL,
     email: BUSINESS.email,
     telephone: BUSINESS.phone,
-    image: absoluteUrl('/images/tattooo.jpg'),
-    logo: absoluteUrl('/images/logo-gamboa.png'),
+    image: [absoluteUrl('/images/tattoomadrid.webp'), absoluteUrl('/IMG_4381.webp'), absoluteUrl('/images/recepcion.webp')],
+    logo: { '@type': 'ImageObject', url: absoluteUrl('/images/logo-gamboa.png'), width: 600, height: 300 },
+    hasMap: MAPS_URL,
     foundingDate: BUSINESS.founded,
     priceRange: '€€',
     currenciesAccepted: 'EUR',
@@ -48,9 +50,9 @@ export function organizationSchema() {
     knowsAbout: [
       'Tatuajes personalizados',
       'Tatuaje realista',
-      'Microrealismo',
-      'Tatuaje minimalista',
-      'Tatuaje neotradicional',
+      'Tatuaje black and grey',
+      'Tatuaje japonés',
+      'Tatuaje fine line',
       'Piercing',
       'Micropigmentación',
     ],
