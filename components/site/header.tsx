@@ -4,8 +4,10 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Menu, X } from 'lucide-react';
+import { ArrowUpRight, Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { BUSINESS } from '@/lib/seo';
+import { HOURS_LINES } from '@/lib/contact';
 import { BookingLink, WhatsAppLink } from './cta-link';
 
 export const NAV_LINKS = [
@@ -43,10 +45,11 @@ export default function Header() {
   const isActive = (href: string) => pathname === href || pathname?.startsWith(`${href}/`);
 
   return (
+    <>
     <header
       className={cn(
         'fixed inset-x-0 top-0 z-50 transition-colors duration-300',
-        scrolled || open ? 'border-b border-line bg-ink/90 backdrop-blur-md' : 'bg-transparent'
+        open ? 'border-b border-line bg-ink' : scrolled ? 'border-b border-line bg-ink/90 backdrop-blur-md' : 'bg-transparent'
       )}
     >
       <a
@@ -106,30 +109,90 @@ export default function Header() {
         </button>
       </div>
 
-      <div
-        id="menu-movil"
-        hidden={!open}
-        className="fixed inset-0 top-16 h-[calc(100dvh-4rem)] overflow-y-auto bg-ink px-4 pb-28 pt-6 lg:hidden"
-      >
-        <nav aria-label="Menú móvil">
-          <ul className="divide-y divide-line border-y border-line">
-            {[{ name: 'Inicio', href: '/' }, ...NAV_LINKS, { name: 'Reservar cita', href: '/reservar' }].map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  aria-current={isActive(link.href) ? 'page' : undefined}
+    </header>
+    <MobileMenu open={open} isActive={isActive} />
+    </>
+  );
+}
+
+/**
+ * Menú móvil a pantalla completa. Va fuera del <header>: el backdrop-blur de la
+ * cabecera crea un bloque contenedor y descolocaría un panel `fixed` dentro.
+ */
+function MobileMenu({ open, isActive }: { open: boolean; isActive: (href: string) => boolean }) {
+  const links = [{ name: 'Inicio', href: '/' }, ...NAV_LINKS];
+  return (
+    <div
+      id="menu-movil"
+      inert={!open}
+      aria-hidden={!open}
+      className={cn(
+        'fixed inset-0 z-[45] flex flex-col overflow-y-auto bg-ink pt-16 transition-[opacity,visibility] duration-300 lg:hidden',
+        open ? 'visible opacity-100' : 'invisible opacity-0'
+      )}
+    >
+      <nav aria-label="Menú móvil" className="flex-1 px-4 pt-6">
+        <ul>
+          {links.map((link, i) => (
+            <li
+              key={link.href}
+              style={{ transitionDelay: open ? `${60 + i * 40}ms` : '0ms' }}
+              className={cn(
+                'border-b border-line transition-[opacity,transform] duration-300 ease-out',
+                open ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0'
+              )}
+            >
+              <Link
+                href={link.href}
+                aria-current={isActive(link.href) && link.href !== '/' ? 'page' : undefined}
+                className="group flex min-h-16 items-center gap-4 py-2"
+              >
+                <span className="tabular w-6 text-xs text-ash">{String(i + 1).padStart(2, '0')}</span>
+                <span
                   className={cn(
-                    'font-display flex min-h-14 items-center text-2xl',
-                    isActive(link.href) ? 'text-gold' : 'text-bone'
+                    'font-display flex-1 text-[2rem] leading-none tracking-tight',
+                    (link.href === '/' ? false : isActive(link.href)) ? 'text-gold' : 'text-bone'
                   )}
                 >
                   {link.name}
-                </Link>
-              </li>
+                </span>
+                <ArrowUpRight aria-hidden className="size-5 text-ash transition-colors group-hover:text-gold" />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div
+        className={cn(
+          'space-y-6 border-t border-line bg-surface-1 px-4 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] transition-[opacity,transform] delay-200 duration-300',
+          open ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0'
+        )}
+      >
+        <div className="grid grid-cols-2 gap-2">
+          <WhatsAppLink placement="menu-movil" className="h-12">
+            WhatsApp
+          </WhatsAppLink>
+          <BookingLink placement="menu-movil" className="h-12" />
+        </div>
+        <div className="flex items-end justify-between gap-4 text-sm">
+          <div className="text-ash">
+            {HOURS_LINES.map((h) => (
+              <p key={h.days}>
+                {h.days} <span className="tabular text-bone">{h.time}</span>
+              </p>
             ))}
-          </ul>
-        </nav>
+          </div>
+          <div className="flex gap-4">
+            <a href={BUSINESS.instagram} target="_blank" rel="noopener noreferrer" className="text-bone hover:text-gold">
+              Instagram
+            </a>
+            <a href={BUSINESS.tiktok} target="_blank" rel="noopener noreferrer" className="text-bone hover:text-gold">
+              TikTok
+            </a>
+          </div>
+        </div>
       </div>
-    </header>
+    </div>
   );
 }

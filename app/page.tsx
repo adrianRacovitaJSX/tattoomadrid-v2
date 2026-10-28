@@ -43,7 +43,9 @@ export default function Home() {
       <section aria-labelledby="hero-title" className="relative overflow-hidden pt-24 lg:pt-32">
         <Container className="grid items-center gap-10 pb-16 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16 lg:pb-24">
           <div>
-            <p className="eyebrow mb-6">Saints &amp; Sinners · Ciudad Lineal · Desde {BUSINESS.founded}</p>
+            <p className="eyebrow mb-6">
+              <span className="hidden sm:inline">Saints &amp; Sinners · </span>Ciudad Lineal · Desde {BUSINESS.founded}
+            </p>
             <h1 id="hero-title" className="font-display text-[2.75rem] leading-[1.02] tracking-tight text-bone sm:text-6xl lg:text-7xl xl:text-8xl">
               Estudio de tatuajes en <em className="not-italic text-gold">Madrid</em>
             </h1>

@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { X, Cookie, Settings, Check, Shield } from 'lucide-react';
+import { X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 // Tipos de consentimiento de cookies
 interface CookieConsent {
@@ -13,7 +14,43 @@ interface CookieConsent {
   timestamp: number;
 }
 
+type OptionalType = 'analytics' | 'advertising';
+
 const COOKIE_CONSENT_KEY = 'cookie-consent';
+
+const OPTIONAL_TYPES: { id: OptionalType; title: string; text: string }[] = [
+  { id: 'analytics', title: 'Analíticas', text: 'Nos dicen qué páginas se visitan para mejorar la web (Google Analytics).' },
+  { id: 'advertising', title: 'Publicitarias', text: 'Miden nuestras campañas y muestran anuncios relevantes (Meta, Google).' },
+];
+
+const btn =
+  'inline-flex h-11 cursor-pointer items-center justify-center rounded-[4px] px-5 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold';
+const btnPrimary = `${btn} bg-gold text-ink hover:bg-gold-strong`;
+const btnSecondary = `${btn} border border-bone/25 text-bone hover:border-gold hover:text-gold`;
+
+function Switch({ checked, onChange, labelledBy }: { checked: boolean; onChange: () => void; labelledBy: string }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      aria-labelledby={labelledBy}
+      onClick={onChange}
+      className={cn(
+        'relative h-7 w-12 shrink-0 cursor-pointer rounded-full border transition-colors',
+        checked ? 'border-gold bg-gold' : 'border-line bg-ink'
+      )}
+    >
+      <span
+        aria-hidden
+        className={cn(
+          'absolute top-1 left-1 size-[1.125rem] rounded-full transition-transform duration-200',
+          checked ? 'translate-x-5 bg-ink' : 'translate-x-0 bg-ash'
+        )}
+      />
+    </button>
+  );
+}
 
 const CookieConsentBanner = () => {
   const pathname = usePathname();
@@ -45,12 +82,13 @@ const CookieConsentBanner = () => {
       } catch {
         // Si hay error al parsear, mostrar el banner
         setShowBanner(true);
+        setIsAnimating(true);
       }
     } else {
-      // Pequeño delay para animación de entrada
+      // Pequeño delay para no competir con la primera pintura de la página
       setTimeout(() => {
         setShowBanner(true);
-        setIsAnimating(true);
+        requestAnimationFrame(() => setIsAnimating(true));
       }, 1000);
     }
   }, [hideOnLanding]);
@@ -67,34 +105,10 @@ const CookieConsentBanner = () => {
     setShowSettings(false);
   };
 
-  const acceptAll = () => {
-    saveConsent({
-      necessary: true,
-      analytics: true,
-      advertising: true,
-      timestamp: Date.now()
-    });
-  };
-
-  const rejectNonEssential = () => {
-    saveConsent({
-      necessary: true,
-      analytics: false,
-      advertising: false,
-      timestamp: Date.now()
-    });
-  };
-
-  const saveCustomSettings = () => {
-    saveConsent(consent);
-  };
-
-  const toggleCookieType = (type: 'analytics' | 'advertising') => {
-    setConsent(prev => ({
-      ...prev,
-      [type]: !prev[type]
-    }));
-  };
+  const acceptAll = () => saveConsent({ necessary: true, analytics: true, advertising: true, timestamp: Date.now() });
+  const rejectNonEssential = () => saveConsent({ necessary: true, analytics: false, advertising: false, timestamp: Date.now() });
+  const saveCustomSettings = () => saveConsent(consent);
+  const toggleCookieType = (type: OptionalType) => setConsent((prev) => ({ ...prev, [type]: !prev[type] }));
 
   // Función para abrir el panel de configuración desde cualquier parte de la web
   const openSettings = useCallback(() => {
@@ -114,203 +128,118 @@ const CookieConsentBanner = () => {
       openSettings;
   }, [hideOnLanding, openSettings]);
 
-  if (hideOnLanding) return null;
+  // Escape cierra el panel de configuración
+  useEffect(() => {
+    if (!showSettings) return;
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setShowSettings(false);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [showSettings]);
 
-  if (!showBanner) return null;
+  if (hideOnLanding || !showBanner) return null;
 
-  return (
-    <>
-      {/* Overlay para el panel de configuración */}
-      {showSettings && (
-        <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9998]"
-          onClick={() => setShowSettings(false)}
-        />
-      )}
-
-      {/* Banner principal */}
-      <div 
-        className={`fixed bottom-0 left-0 right-0 z-[9999] transition-transform duration-500 ease-out ${
-          isAnimating ? 'translate-y-0' : 'translate-y-full'
-        }`}
-      >
-        <div className="bg-zinc-900/98 backdrop-blur-md border-t border-zinc-800 shadow-2xl">
-          <div className="container mx-auto px-4 py-4 md:py-5">
-            {!showSettings ? (
-              // Vista del banner principal
-              <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4 lg:gap-6">
-                <div className="flex items-start gap-3 flex-1">
-                  <div className="h-10 w-10 bg-[#be8f52]/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Cookie className="h-5 w-5 text-[#be8f52]" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-white font-semibold text-base mb-1">
-                      Utilizamos cookies
-                    </h3>
-                    <p className="text-gray-300 text-sm leading-relaxed">
-                      Usamos cookies propias y de terceros para mejorar tu experiencia de navegación, 
-                      analizar el tráfico del sitio y personalizar contenido. Puedes aceptar todas, 
-                      rechazar las no esenciales o configurar tus preferencias.{' '}
-                      <Link href="/cookies" className="text-[#be8f52] hover:underline">
-                        Más información sobre cookies
-                      </Link>
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
-                  <button
-                    onClick={() => setShowSettings(true)}
-                    className="px-4 py-2.5 text-sm font-medium text-gray-300 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-lg transition-colors flex items-center justify-center gap-2"
-                  >
-                    <Settings size={16} />
-                    Configurar
-                  </button>
-                  <button
-                    onClick={rejectNonEssential}
-                    className="px-4 py-2.5 text-sm font-medium text-gray-300 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-lg transition-colors"
-                  >
-                    Rechazar
-                  </button>
-                  <button
-                    onClick={acceptAll}
-                    className="px-5 py-2.5 text-sm font-medium text-black bg-[#be8f52] hover:bg-[#be8f52]/90 rounded-lg transition-colors flex items-center justify-center gap-2"
-                  >
-                    <Check size={16} />
-                    Aceptar todas
-                  </button>
-                </div>
-              </div>
-            ) : (
-              // Panel de configuración
-              <div className="max-w-2xl mx-auto">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 bg-[#be8f52]/20 rounded-full flex items-center justify-center">
-                      <Settings className="h-5 w-5 text-[#be8f52]" />
-                    </div>
-                    <h3 className="text-white font-semibold text-lg">
-                      Configuración de cookies
-                    </h3>
-                  </div>
-                  <button
-                    onClick={() => setShowSettings(false)}
-                    className="h-8 w-8 flex items-center justify-center rounded-full bg-zinc-800 hover:bg-zinc-700 text-gray-400 hover:text-white transition-colors"
-                  >
-                    <X size={18} />
-                  </button>
-                </div>
-
-                <p className="text-gray-400 text-sm mb-5">
-                  Gestiona tus preferencias de cookies. Las cookies técnicas son necesarias para el funcionamiento del sitio.
-                </p>
-
-                <div className="space-y-3 mb-6">
-                  {/* Cookies Técnicas - Siempre activas */}
-                  <div className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 bg-green-500/20 rounded-full flex items-center justify-center">
-                          <Shield size={16} className="text-green-400" />
-                        </div>
-                        <div>
-                          <h4 className="text-white font-medium text-sm">Cookies técnicas</h4>
-                          <p className="text-gray-400 text-xs">Necesarias para el funcionamiento del sitio</p>
-                        </div>
-                      </div>
-                      <div className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-xs font-medium">
-                        Siempre activas
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Cookies Analíticas */}
-                  <div className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 bg-blue-500/20 rounded-full flex items-center justify-center">
-                          <svg className="h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                          </svg>
-                        </div>
-                        <div>
-                          <h4 className="text-white font-medium text-sm">Cookies analíticas</h4>
-                          <p className="text-gray-400 text-xs">Nos ayudan a mejorar el sitio web</p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => toggleCookieType('analytics')}
-                        className={`relative w-12 h-6 rounded-full transition-colors ${
-                          consent.analytics ? 'bg-[#be8f52]' : 'bg-zinc-600'
-                        }`}
-                      >
-                        <span
-                          className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${
-                            consent.analytics ? 'translate-x-7' : 'translate-x-1'
-                          }`}
-                        />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Cookies Publicitarias */}
-                  <div className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 bg-purple-500/20 rounded-full flex items-center justify-center">
-                          <svg className="h-4 w-4 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
-                          </svg>
-                        </div>
-                        <div>
-                          <h4 className="text-white font-medium text-sm">Cookies publicitarias</h4>
-                          <p className="text-gray-400 text-xs">Permiten mostrar anuncios personalizados</p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => toggleCookieType('advertising')}
-                        className={`relative w-12 h-6 rounded-full transition-colors ${
-                          consent.advertising ? 'bg-[#be8f52]' : 'bg-zinc-600'
-                        }`}
-                      >
-                        <span
-                          className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${
-                            consent.advertising ? 'translate-x-7' : 'translate-x-1'
-                          }`}
-                        />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <button
-                    onClick={rejectNonEssential}
-                    className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-300 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-lg transition-colors"
-                  >
-                    Solo esenciales
-                  </button>
-                  <button
-                    onClick={saveCustomSettings}
-                    className="flex-1 px-4 py-2.5 text-sm font-medium text-black bg-[#be8f52] hover:bg-[#be8f52]/90 rounded-lg transition-colors"
-                  >
-                    Guardar preferencias
-                  </button>
-                </div>
-
-                <p className="text-gray-500 text-xs text-center mt-4">
-                  Puedes cambiar tus preferencias en cualquier momento desde nuestra{' '}
-                  <Link href="/cookies" className="text-[#be8f52] hover:underline">
-                    política de cookies
-                  </Link>
-                </p>
-              </div>
-            )}
+  if (showSettings) {
+    return (
+      <div className="fixed inset-0 z-[60] flex items-end justify-center sm:items-center sm:p-6">
+        <div aria-hidden className="absolute inset-0 bg-ink/80 backdrop-blur-sm" onClick={() => setShowSettings(false)} />
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="cookies-title"
+          className="relative w-full max-w-lg rounded-t-[4px] border border-line bg-surface-1 p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:rounded-[4px] sm:p-8"
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="eyebrow mb-2">Privacidad</p>
+              <h2 id="cookies-title" className="font-display text-3xl text-bone">
+                Configurar cookies
+              </h2>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowSettings(false)}
+              aria-label="Cerrar configuración de cookies"
+              className="-mr-2 -mt-1 flex size-11 cursor-pointer items-center justify-center text-ash hover:text-bone"
+            >
+              <X className="size-5" />
+            </button>
           </div>
+
+          <ul className="mt-6 divide-y divide-line border-y border-line">
+            <li className="flex items-center justify-between gap-6 py-4">
+              <div>
+                <p className="font-medium text-bone">Técnicas</p>
+                <p className="mt-1 text-sm text-ash">Necesarias para que la web funcione. No se pueden desactivar.</p>
+              </div>
+              <span className="shrink-0 text-xs text-ash">Siempre activas</span>
+            </li>
+            {OPTIONAL_TYPES.map((t) => (
+              <li key={t.id} className="flex items-center justify-between gap-6 py-4">
+                <div>
+                  <p id={`cookie-${t.id}`} className="font-medium text-bone">
+                    {t.title}
+                  </p>
+                  <p className="mt-1 text-sm text-ash">{t.text}</p>
+                </div>
+                <Switch checked={consent[t.id]} onChange={() => toggleCookieType(t.id)} labelledBy={`cookie-${t.id}`} />
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-6 grid grid-cols-2 gap-2">
+            <button type="button" onClick={rejectNonEssential} className={btnSecondary}>
+              Rechazar todas
+            </button>
+            <button type="button" onClick={saveCustomSettings} className={btnPrimary}>
+              Guardar
+            </button>
+          </div>
+          <p className="mt-4 text-xs text-ash">
+            Puedes cambiarlo cuando quieras. Más detalle en la{' '}
+            <Link href="/cookies" className="text-gold underline-offset-2 hover:underline">
+              política de cookies
+            </Link>
+            .
+          </p>
         </div>
       </div>
-    </>
+    );
+  }
+
+  return (
+    <div
+      role="region"
+      aria-label="Aviso de cookies"
+      className={cn(
+        'fixed inset-x-0 bottom-0 z-[60] p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] transition-[opacity,transform] duration-500 ease-out sm:p-4 lg:inset-x-auto lg:bottom-6 lg:right-6 lg:max-w-md lg:p-0',
+        isAnimating ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
+      )}
+    >
+      <div className="rounded-[4px] border border-line bg-surface-1/95 p-5 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.8)] backdrop-blur-md">
+        <p className="eyebrow mb-2">Cookies</p>
+        <p className="text-sm leading-relaxed text-bone/90">
+          Usamos cookies propias y de terceros para analizar el tráfico y medir nuestras campañas. Las técnicas son necesarias; el resto, solo si las aceptas.{' '}
+          <Link href="/cookies" className="text-gold underline-offset-2 hover:underline">
+            Política de cookies
+          </Link>
+        </p>
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <button type="button" onClick={rejectNonEssential} className={btnSecondary}>
+            Rechazar
+          </button>
+          <button type="button" onClick={acceptAll} className={btnPrimary}>
+            Aceptar
+          </button>
+        </div>
+        <button
+          type="button"
+          onClick={() => setShowSettings(true)}
+          className="mt-2 inline-flex h-10 w-full cursor-pointer items-center justify-center text-sm text-ash underline-offset-4 hover:text-bone hover:underline"
+        >
+          Configurar
+        </button>
+      </div>
+    </div>
   );
 };
 
