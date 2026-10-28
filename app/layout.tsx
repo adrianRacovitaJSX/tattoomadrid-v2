@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Fraunces, Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import SiteFrame from "@/components/site-frame";
 import CookieConsentBanner from "@/components/cookie-consent";
@@ -12,14 +12,18 @@ import { SITE_URL, SITE_NAME, DEFAULT_OG_IMAGE } from "@/lib/seo";
 import { organizationSchema, websiteSchema } from "@/lib/schema";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// Serif de alto contraste solo para titulares.
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
+  display: "swap",
+  axes: ["opsz"],
 });
 
 export const metadata: Metadata = {
@@ -87,7 +91,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0a0a0a",
+  themeColor: "#0b0b0c",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
@@ -99,10 +103,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" suppressHydrationWarning>
+    <html lang="es" className="dark" suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://www.google.com" />
-        <link rel="preconnect" href="https://maps.googleapis.com" />
         <link rel="preconnect" href="https://www.googletagmanager.com" crossOrigin="" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
         <script
@@ -122,8 +124,11 @@ export default function RootLayout({
                   where: {
                     href_matches: [
                       "/reservar",
-                      "/contacto",
-                      "/servicios",
+                      "/tatuajes",
+                      "/tatuajes/*",
+                      "/artistas",
+                      "/artistas/*",
+                      "/precios",
                     ],
                   },
                   eagerness: "moderate",
@@ -140,12 +145,12 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${inter.variable} ${fraunces.variable} font-sans antialiased`}
       >
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
-          enableSystem
+          forcedTheme="dark"
           disableTransitionOnChange
         >
           <SiteFrame>{children}</SiteFrame>

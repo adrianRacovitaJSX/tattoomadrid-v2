@@ -92,3 +92,37 @@ export const SERVICES_CATALOG = [
     category: 'Diseño',
   },
 ];
+
+/** Preguntas de la home: responden las objeciones antes del primer contacto. */
+export const HOME_FAQS: Faq[] = [
+  {
+    question: '¿Cuánto cuesta un tatuaje en Madrid?',
+    answer:
+      'En Saints & Sinners los tatuajes empiezan en 70 €. El precio final depende del tamaño, la zona y el nivel de detalle; te damos presupuesto cerrado antes de empezar.',
+  },
+  {
+    question: '¿Cómo pido cita?',
+    answer:
+      'Escríbenos por WhatsApp o rellena el formulario de reserva con tu idea, la zona y una referencia. Te respondemos con propuesta, precio y fechas disponibles.',
+  },
+  {
+    question: '¿Hay que dejar señal?',
+    answer:
+      'Para reservar fecha pedimos una señal de 50 € que se descuenta del precio final del tatuaje.',
+  },
+  {
+    question: '¿El diseño está incluido?',
+    answer:
+      'Sí. El artista prepara el diseño a partir de tu idea y lo ajusta contigo antes de la sesión.',
+  },
+  {
+    question: '¿Incluye retoque?',
+    answer:
+      'Incluimos un retoque gratuito dentro de los 3 primeros meses tras el tatuaje, si la cicatrización lo necesita.',
+  },
+  {
+    question: '¿Puedo ir sin cita previa?',
+    answer:
+      'Trabajamos con cita para dedicar a cada pieza el tiempo que necesita. Escríbenos por WhatsApp y te decimos el primer hueco disponible.',
+  },
+];

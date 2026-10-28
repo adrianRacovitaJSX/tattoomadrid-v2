@@ -45,7 +45,9 @@ export async function POST(request: Request) {
       `${SITE_URL}/`,
       `${SITE_URL}/servicios`,
       `${SITE_URL}/reservar`,
-      `${SITE_URL}/contacto`,
+      `${SITE_URL}/tatuajes`,
+      `${SITE_URL}/artistas`,
+      `${SITE_URL}/precios`,
       `${SITE_URL}/blog`,
     ];
   }

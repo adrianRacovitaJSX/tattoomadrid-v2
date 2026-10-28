@@ -55,32 +55,26 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      // Redirecciones de rutas antiguas a nuevas
-      // Mientras /artistas no exista (lo implementaremos a futuro), las rutas
-      // antiguas redirigen a /servicios, que es la página comercial principal.
+      // Redirecciones de rutas antiguas a las del rediseño
+      // /contacto duplicaba /reservar (mismo NAP, horario y formulario).
+      {
+        source: "/contacto",
+        destination: "/reservar",
+        permanent: true,
+      },
       {
         source: "/artistas-tatuadores/:path*",
-        destination: "/servicios",
+        destination: "/artistas",
         permanent: true,
       },
       {
         source: "/author/:path*",
-        destination: "/servicios",
-        permanent: true,
-      },
-      {
-        source: "/artistas",
-        destination: "/servicios",
-        permanent: true,
-      },
-      {
-        source: "/artistas/:path*",
-        destination: "/servicios",
+        destination: "/artistas",
         permanent: true,
       },
       {
         source: "/estudio-piercings/:path*",
-        destination: "/servicios",
+        destination: "/piercing-madrid",
         permanent: true,
       },
       {
@@ -95,7 +89,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/estudio-tatuajes-madrid/:path*",
-        destination: "/contacto",
+        destination: "/",
         permanent: true,
       },
       {

@@ -1,177 +1,106 @@
 import ReservaForm from "@/components/reservar/formulario";
-import { MapPin, Clock, Phone, Mail } from 'lucide-react';
-import Link from 'next/link';
+import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import JsonLd from "@/components/json-ld";
-import { buildMetadata } from "@/lib/seo";
-import { breadcrumbSchema, reserveActionSchema } from "@/lib/schema";
+import { buildMetadata, BUSINESS } from "@/lib/seo";
+import { reserveActionSchema } from "@/lib/schema";
+import { CONTACT_FAQS } from "@/lib/faqs";
+import { ADDRESS_LINE, HOURS_LINES, MAPS_URL, TEL_HREF } from "@/lib/contact";
+import { Breadcrumbs, Container, FaqList, Section, SectionHeader } from "@/components/site/blocks";
+import { WhatsAppLink } from "@/components/site/cta-link";
 
 export const metadata = buildMetadata({
-  title: "Reserva tu Cita — Estudio de Tatuajes en Madrid",
+  title: "Reservar Cita — Estudio de Tatuajes en Madrid",
   description:
-    "Reserva una sesión con Saints & Sinners Tattoo Madrid. Completa el formulario y te confirmamos tu cita en menos de 24 horas. Tatuaje, piercing y micropigmentación.",
+    "Pide cita en Saints & Sinners Tattoo Madrid: cuéntanos tu idea por WhatsApp o con el formulario y te respondemos con propuesta, precio y fechas. Tatuaje y piercing.",
   path: "/reservar",
   ogTitle: "Reserva tu cita en Saints & Sinners",
-  ogKicker: "Confirmamos en menos de 24 h",
+  ogKicker: "Propuesta y presupuesto sin compromiso",
   mdSlug: "reservar",
-  keywords: [
-    "reservar cita tatuaje Madrid",
-    "cita estudio tatuajes",
-    "reserva tatuaje",
-    "formulario reserva tatuaje",
-  ],
+  keywords: ["reservar cita tatuaje Madrid", "pedir cita tatuaje Madrid", "contacto estudio tatuajes Madrid"],
 });
 
-export default function Page() {
+export default function ReservarPage() {
   return (
-    <div className="bg-zinc-50 dark:bg-zinc-900 relative overflow-hidden pt-20 pb-20">
-      <JsonLd
-        id="ld-breadcrumb-reservar"
-        data={breadcrumbSchema([
-          { name: "Inicio", path: "/" },
-          { name: "Reservar", path: "/reservar" },
-        ])}
-      />
+    <>
       <JsonLd id="ld-reserve-action" data={reserveActionSchema()} />
-      {/* Elementos decorativos de fondo */}
-      <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-[#be8f52]/20 to-transparent"></div>
-      <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#be8f52]/20 to-transparent"></div>
-      <div className="absolute top-20 -left-20 w-80 h-80 bg-[#be8f52]/10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-20 -right-20 w-80 h-80 bg-[#be8f52]/10 rounded-full blur-3xl"></div>
-      
-      <div className="container mx-auto px-4 sm:px-6 relative py-12 sm:py-16">
-        {/* Cabecera de la página */}
-        <div className="max-w-4xl mx-auto mb-12 text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-zinc-900 dark:text-white mb-4">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#be8f52] to-amber-500">
-              Reserva tu cita
-            </span>
-          </h1>
-          <p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
-            Completa el formulario y nos pondremos en contacto contigo para confirmar los detalles de tu sesión
-          </p>
-        </div>
-        
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Formulario (2/3 del ancho en pantallas grandes) */}
-          <div className="w-full lg:w-2/3">
-            <ReservaForm />
-          </div>
-          
-          {/* Información de contacto (1/3 del ancho) */}
-          <div className="w-full lg:w-1/3 mt-8 lg:mt-0">
-            <div className="bg-white dark:bg-zinc-800 rounded-2xl shadow-xl overflow-hidden border border-zinc-200 dark:border-zinc-700 h-full">
-              <div className="p-6">
-                <h2 className="text-2xl font-bold text-zinc-900 dark:text-white mb-6">
-                  Información de contacto
-                </h2>
-                
-                {/* Mapa */}
-                <div className="aspect-video w-full rounded-lg overflow-hidden mb-6 bg-zinc-200 dark:bg-zinc-700">
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3036.4850207400053!2d-3.6540752831745196!3d40.4456140593348!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd422fa16c3c3b59%3A0x9ceb56669402ba2f!2sC.%20de%20los%20Hermanos%20G%C3%B3mez%2C%205%2C%2028017%20Madrid!5e0!3m2!1ses!2ses!4v1715866394965!5m2!1ses!2ses"
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    className="w-full h-full"
-                    title="Ubicación de Saints & Sinners Tattoo Madrid en Google Maps"
-                  ></iframe>
-                </div>
-                
-                {/* Dirección */}
-                <div className="flex items-start mb-5">
-                  <MapPin className="h-5 w-5 text-[#be8f52] mr-3 mt-0.5 flex-shrink-0" />
+
+      <section aria-labelledby="reservar-h1" className="pt-28 lg:pt-36">
+        <Container>
+          <Breadcrumbs items={[{ name: "Reservar", path: "/reservar" }]} />
+          <div className="grid gap-12 lg:grid-cols-12">
+            <div className="lg:col-span-7">
+              <p className="eyebrow mb-6">Reservar</p>
+              <h1 id="reservar-h1" className="font-display text-5xl leading-[1.02] tracking-tight text-bone sm:text-7xl">
+                Cuéntanos tu idea
+              </h1>
+              <p className="mt-6 max-w-xl text-lg leading-relaxed text-ash">
+                La forma más rápida es WhatsApp: mándanos la idea, la zona y una foto de referencia. Si lo prefieres, usa el formulario y te escribimos nosotros.
+              </p>
+              <div className="mt-8">
+                <WhatsAppLink placement="reservar-hero" size="lg" />
+              </div>
+
+              <div className="mt-12">
+                <p className="mb-4 text-sm text-ash">O rellena el formulario:</p>
+                <ReservaForm />
+              </div>
+            </div>
+
+            <aside aria-label="Datos del estudio" className="lg:col-span-5">
+              <div className="space-y-8 rounded-[4px] border border-line bg-surface-1 p-6 sm:p-8 lg:sticky lg:top-28">
+                <div className="flex gap-4">
+                  <MapPin aria-hidden className="mt-1 size-5 shrink-0 text-gold" />
                   <div>
-                    <h3 className="font-medium text-zinc-900 dark:text-white">Dirección</h3>
-                    <p className="text-zinc-600 dark:text-zinc-400 mt-1">
-                      C. de los Hermanos Gómez, 5<br />
-                      Cdad. Lineal, 28017 Madrid, España
-                    </p>
-                    <a 
-                      href="https://maps.google.com/?q=Calle+de+los+Hermanos+Gómez+5+Madrid+España" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-sm text-[#be8f52] hover:underline mt-1 inline-block"
-                    >
-                      Ver en Google Maps
+                    <h2 className="font-medium text-bone">Dirección</h2>
+                    <a href={MAPS_URL} target="_blank" rel="noopener noreferrer" className="mt-1 block text-ash hover:text-gold">
+                      {ADDRESS_LINE}
                     </a>
                   </div>
                 </div>
-                
-                {/* Horarios */}
-                <div className="flex items-start mb-5">
-                  <Clock className="h-5 w-5 text-[#be8f52] mr-3 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <h3 className="font-medium text-zinc-900 dark:text-white">Horario</h3>
-                    <ul className="text-zinc-600 dark:text-zinc-400 mt-1 space-y-0.5">
-                      <li className="flex justify-between">
-                        <span>Lunes - Sábado:</span>
-                        <span>11:00 - 14:00, 15:00 - 20:00</span>
-                      </li>
-                      <li>
-                        <span>Domingo: Cita previa</span>
-                      </li>
-                    </ul>
+                <div className="flex gap-4">
+                  <Clock aria-hidden className="mt-1 size-5 shrink-0 text-gold" />
+                  <div className="flex-1">
+                    <h2 className="font-medium text-bone">Horario</h2>
+                    <dl className="mt-1 space-y-1">
+                      {HOURS_LINES.map((h) => (
+                        <div key={h.days} className="flex justify-between gap-4 text-ash">
+                          <dt>{h.days}</dt>
+                          <dd className="tabular text-bone">{h.time}</dd>
+                        </div>
+                      ))}
+                    </dl>
                   </div>
                 </div>
-                
-                {/* Teléfono */}
-                <div className="flex items-start mb-5">
-                  <Phone className="h-5 w-5 text-[#be8f52] mr-3 mt-0.5 flex-shrink-0" />
+                <div className="flex gap-4">
+                  <Phone aria-hidden className="mt-1 size-5 shrink-0 text-gold" />
                   <div>
-                    <h3 className="font-medium text-zinc-900 dark:text-white">Teléfono</h3>
-                    <a 
-                      href="tel:+34603211318" 
-                      className="text-zinc-600 dark:text-zinc-400 hover:text-[#be8f52] dark:hover:text-[#be8f52] mt-1 block"
-                    >
-                      +34 603 21 13 18
+                    <h2 className="font-medium text-bone">Teléfono</h2>
+                    <a href={TEL_HREF} className="tabular mt-1 block text-ash hover:text-gold">
+                      {BUSINESS.phone}
                     </a>
                   </div>
                 </div>
-                
-                {/* Email */}
-                <div className="flex items-start">
-                  <Mail className="h-5 w-5 text-[#be8f52] mr-3 mt-0.5 flex-shrink-0" />
+                <div className="flex gap-4">
+                  <Mail aria-hidden className="mt-1 size-5 shrink-0 text-gold" />
                   <div>
-                    <h3 className="font-medium text-zinc-900 dark:text-white">Email</h3>
-                    <a 
-                      href="mailto:snstattoomadrid@gmail.com" 
-                      className="text-zinc-600 dark:text-zinc-400 hover:text-[#be8f52] dark:hover:text-[#be8f52] mt-1 block"
-                    >
-                      snstattoomadrid@gmail.com
-                    </a>
-                  </div>
-                </div>
-                
-                {/* CTA */}
-                <div className="mt-8 p-4 bg-zinc-100 dark:bg-zinc-700 rounded-lg">
-                  <p className="text-zinc-700 dark:text-zinc-300 font-medium text-sm">
-                    ¿Prefieres contactarnos directamente?
-                  </p>
-                  <div className="mt-2 flex gap-2">
-                    <Link 
-                      href="/contacto" 
-                      className="flex-1 inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-[#be8f52] hover:bg-[#be8f52]/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#be8f52] transition-all duration-200"
-                    >
-                      Contactar
-                    </Link>
-                    <a 
-                      href="https://wa.me/34603211318" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="flex-1 inline-flex justify-center items-center px-4 py-2 border border-zinc-300 dark:border-zinc-600 shadow-sm text-sm font-medium rounded-lg text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#be8f52] transition-all duration-200"
-                    >
-                      WhatsApp
+                    <h2 className="font-medium text-bone">Email</h2>
+                    <a href={`mailto:${BUSINESS.email}`} className="mt-1 block break-all text-ash hover:text-gold">
+                      {BUSINESS.email}
                     </a>
                   </div>
                 </div>
               </div>
-            </div>
+            </aside>
           </div>
+        </Container>
+      </section>
+
+      <Section labelledBy="faq-title" className="mt-12 border-t border-line">
+        <div className="grid gap-10 lg:grid-cols-[1fr_2fr] lg:gap-16">
+          <SectionHeader id="faq-title" eyebrow="Dudas" title="Antes de reservar" />
+          <FaqList items={CONTACT_FAQS} schemaId="ld-faq-reservar" />
         </div>
-      </div>
-    </div>
+      </Section>
+    </>
   );
-} 
+}
